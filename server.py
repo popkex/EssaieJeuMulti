@@ -6,7 +6,6 @@ import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 
-
 #----------------------------------------------------------------
 @dataclass
 class DataBase:
