@@ -84,11 +84,17 @@ class ThreadForClient(threading.Thread):
         print(f"Client {self.address} déconnecté et retiré de la liste.")
 
     def execute_order(self, data):
-        """Exécute les différentes commandes en fonction des données reçues."""
-        if data == _pcs.codes["PlayerDisconnect"]:
+        """
+            Exécute les différentes commandes en fonction des données reçues.
+            data[0] est l'endoit ou il y aura obligatoirement le code, si il y a plus de valeur, celle ci seront traiter apres
+        """
+        if data[0] == _pcs.codes["PlayerDisconnect"]:
+            self.remove_client()
             print(f"Client {self.address} a demandé la déconnexion.")
-        elif data == _pcs.codes["PlayerConnect"]:
+        elif data[0] == _pcs.codes["PlayerConnect"]:
             self.register_client()
+        elif data[0] == _pcs.codes["PositionPlayer"][0]:
+            print(f"data[0]: {data[0]}; data: {data}")
 
     def register_client(self):
         """Enregistre le client si ce n'est pas déjà fait."""
