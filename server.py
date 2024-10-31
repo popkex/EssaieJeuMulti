@@ -117,8 +117,8 @@ class ThreadForClient(threading.Thread):
 
         if self.address in self.server.clients_id:
             self.server.clients_id.remove(self.address)  # Retire le client de la liste
+            print(f"Client {self.address} est déconnecter")
 
-        print(f"Client {self.address} est déconnecter")
 
 
 class GameDataSender(threading.Thread):
