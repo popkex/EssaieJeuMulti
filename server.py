@@ -46,7 +46,7 @@ class Server:
 
         print(f"Le serveur est démarré sur {hostname}:{port}")
 
-        self.game_data_sender = GameDataSender()
+        self.game_data_sender = GameDataSender(self)
         self.game_data_sender.start()
 
         # self.start_verification_thread()  # Démarre le thread de vérification des clients connectés
