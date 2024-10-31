@@ -10,6 +10,7 @@
 import socket
 import threading
 import time
+import ast
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
@@ -56,10 +57,18 @@ class Client(threading.Thread):
                     else:
                         print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(data_content)}\033[0m")
 
-    def execute_order(self, order_code):
-        if order_code == _pcs.codes["Ping"]:
-            print("Ping reçu")
-            self.send_order("Pong")
+    def execute_order(self, data_received):
+        """extrès le code et les données puis execute l'ordre adequate"""
+        order_code, data_content_str = data_received.split(", ", 1)  # Séparer le code du reste
+
+        if order_code == _pcs.codes["PositionPlayer"][0] and data_content_str:
+            data_content = ast.literal_eval(data_content_str)  # Convertir la chaîne en dictionnaire
+
+            # Vérifier si le dictionnaire est vide
+            if data_content:  # Si data_content n'est pas vide, on continue
+                ip_port, coords = list(data_content.items())[0]  # Extraire la clé et les coordonnées
+                ip = ip_port[0]
+                result = [ip, coords]  # Créer la structure finale dans le format voulu
 
     def disconnect(self):
         self.send_order("PlayerDisconnect")
@@ -76,7 +85,6 @@ class Client(threading.Thread):
         data = self.socket.recv(1024).decode('utf8')  # Recevoir des données du serveur
 
         if data:
-            print(f"Données reçues: {data}")
             self.execute_order(data)  # Traiter les données reçues
 
     def run(self):
