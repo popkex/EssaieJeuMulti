@@ -110,13 +110,11 @@ class ThreadForClient(threading.Thread):
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
     
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
-                try:
-                    """recupère la position et l'enregistre"""
-                    position_string = content_string.strip('()')
-                    position = tuple(map(float, position_string.split(',')))
-                    self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
-                except all as e:
-                    print(e)
+                """recupère la position et l'enregistre"""
+                position_string = content_string.strip('()')
+                position = tuple(map(float, position_string.split(',')))
+                self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
+                print(self.server.data_base.player_pos)
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
@@ -132,7 +130,7 @@ class ThreadForClient(threading.Thread):
 
         if self.address in self.server.clients_id:
             self.server.clients_id.remove(self.address)  # Retire le client de la liste
-            self.server.data_base.player_pos.remove(self.address)
+            self.server.data_base.player_pos.pop(self.address, None)
             print(f"Client {self.address} est déconnecter")
 
 
