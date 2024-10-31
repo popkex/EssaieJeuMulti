@@ -119,7 +119,7 @@ class ThreadForClient(threading.Thread):
                     position = tuple(map(float, position_string.split(',')))
                     self.server.data_base.player_pos.self.address = position  # enregistre la position du joueur
                     print(self.server.data_base.player_pos)
-                except ValueError as e:
+                except all as e:
                     print(e)
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
