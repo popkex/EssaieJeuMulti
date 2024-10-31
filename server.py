@@ -110,12 +110,11 @@ class ThreadForClient(threading.Thread):
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
-                print("player position")
                 try:
                     """recupère la position et l'enregistre"""
                     position_string = content_string.strip('()')
                     position = tuple(map(float, position_string.split(',')))
-                    self.server.data_base.player_pos.self.address = position  # enregistre la position du joueur
+                    self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
                     print(self.server.data_base.player_pos)
                 except all as e:
                     print(e)
