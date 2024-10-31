@@ -68,7 +68,7 @@ class Server:
             try:
                 client_conn.send(data)  # envoie les données via chaque connexion de client
             except BrokenPipeError as e:
-                print(f"error: {e}")
+                client_conn.close()
 
 
 
@@ -143,8 +143,6 @@ class GameDataSender(threading.Thread):
     def regroup_data(self):
         """Envoie les données importantes aux clients"""
         while True:
-            time.sleep(0.05)  # evite la surcharge
-
             code_and_players_pos = f"PPos, {data_base.player_pos}"
             self.server.send_data_to_clients(code_and_players_pos)
 

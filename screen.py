@@ -17,5 +17,3 @@ class Screen:
         """Dessine les joueurs"""
         for player_id, position in players_pos:
             pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], 50, 50))
-
-        print(players_pos)
