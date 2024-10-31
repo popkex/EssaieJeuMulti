@@ -50,13 +50,6 @@ class Server:
         self.game_data_sender = GameDataSender(self)
         self.game_data_sender.start()
 
-        # self.start_verification_thread()  # Démarre le thread de vérification des clients connectés
-
-    # def start_verification_thread(self):
-    #     """Démarre le thread pour vérifier les connexions des clients."""
-    #     verification_thread = VerifieIfClientAsConnected(self)
-    #     verification_thread.start()
-
     def listen(self):
         """Écoute et accepte les connexions des clients."""
         while True:
@@ -72,6 +65,7 @@ class Server:
         data = data.encode("utf-8")
 
         for client_conn in self.clients_id:
+            print(f"client_conn: {client_conn}; clients_id_len: {len(self.clients_id)}")
             try:
                 client_conn.send(data)  # envoie les données via chaque connexion de client
             except BrokenPipeError as e:
@@ -153,34 +147,7 @@ class GameDataSender(threading.Thread):
             time.sleep(0.05)  # evite la surcharge
 
             code_and_players_pos = f"PPos, {data_base.player_pos}"
-            print(code_and_players_pos)
             self.server.send_data_to_clients(code_and_players_pos)
-
-
-
-# class VerifieIfClientAsConnected(threading.Thread):
-
-#     def __init__(self, server):
-#         super().__init__()
-#         self.server = server
-
-#     def ping_client(self, address):
-#         """Envoie un ping au client et attend une réponse."""
-#         try:
-#             self.server.socket.sendto(
-#                 address,
-#                 _pcs.codes["Ping"].encode())  # Envoie le ping au client
-#             print(f"Ping envoyé à {address}")
-#         except:
-#             pass
-
-#     def run(self):
-#         """Ping régulièrement tous les clients connectés."""
-#         while True:
-#             for address in self.server.clients_id:
-#                 self.ping_client(address)  # Ping le client
-#                 time.sleep(1)  # Pause entre les pings
-#             time.sleep(10)  # Attendre 10 secondes avant de ping à nouveau
 
 #----------------------------------------------------------------
 if __name__ == "__main__":
