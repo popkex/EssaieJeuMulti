@@ -148,7 +148,6 @@ class GameDataSender(threading.Thread):
         while True:
             time.sleep(0.05)
 
-            print("regroup data...")
             players_pos = []
 
             for player_pos in self.server.data_base.player_pos:
