@@ -78,6 +78,7 @@ class ThreadForClient(threading.Thread):
             try:
                 data = self.conn.recv(1024)  # reçoit les données
                 if data:
+                    print(data)
                     data = data.decode('utf8')
                     self.execute_order(data)
             except Exception as e:
