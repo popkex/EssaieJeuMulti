@@ -71,6 +71,7 @@ class Server:
 
         try:
             self.socket.send(data)
+            print(data)
         except BrokenPipeError:
             pass
 
@@ -150,7 +151,6 @@ class GameDataSender(threading.Thread):
         while True:
             time.sleep(0.05)  # evite la surcharge
 
-            print("run")
             code_and_players_pos = f"PPos, {self.server.data_base.player_pos}"
             self.server.send_data_to_clients(code_and_players_pos)
 
