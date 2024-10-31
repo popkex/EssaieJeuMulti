@@ -43,19 +43,15 @@ class Client(threading.Thread):
             if not data_content:
                 data = _pcs.codes[order_code].encode('utf8')
                 self.socket.send(data)  # Utiliser send au lieu de sendto
-                print(f"Data sent: {order_code}")
             else:
                 if order_code == "PositionPlayer":
-                    print("Player Position")
                     # Vérification si data_content est un tuple de deux floats
                     if isinstance(data_content, tuple) and len(data_content) == 2:
                         # Préparer la structure de données à encoder
                         data_to_send = f"{_pcs.codes[order_code][0]}|{data_content}"
                         data = data_to_send.encode('utf8')
 
-                        print(f"Data sent: {data}")
                         self.socket.send(data)
-                        print(f"Data sent: {data}")
                         # Ici, nous n'encode pas encore, juste une préparation
                     else:
                         print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(data_content)}\033[0m")
@@ -99,7 +95,6 @@ class Client(threading.Thread):
 
             try:
                 self.send_update()
-                print("Update sent")  # Pour voir si send_update() passe correctement
             except Exception as e:
                 print(f"Erreur dans send_update(): {e}")
                 self.socket.close()
