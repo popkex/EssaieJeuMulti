@@ -153,6 +153,7 @@ class GameDataSender(threading.Thread):
             time.sleep(0.05)  # evite la surcharge
 
             code_and_players_pos = f"PPos, {data_base.player_pos}"
+            print(code_and_players_pos)
             self.server.send_data_to_clients(code_and_players_pos)
 
 

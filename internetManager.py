@@ -7,7 +7,7 @@ class InternetManager:
         self.client_thread = Client(game)
         self.client_thread.start()
 
-        self.my_ip = self.client_thread.get_my_ip()  # recupère et stock l'ip public du client
+        self.my_ip = self.client_thread.get_my_id()  # recupère et stock l'ip public du client
 
     def stop(self):
         """Arrete la synchronisation client server"""

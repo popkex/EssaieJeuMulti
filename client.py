@@ -45,11 +45,12 @@ class Client(threading.Thread):
     def get_players_position(self):
         return list(data_base.player_pos.items())  # list() pour transformer le dic en list // .items() pour recupere a la fois la clé mais aussi la donnée
 
-    def get_my_ip(self):
-        """Recupère l'ip public du client"""
-        response = requests.get("https://api.ipify.org?format=text")
-        response.raise_for_status()  # Vérifie que la requête est réussie
-        return response.text
+    def get_my_id(self):
+        """Recupère l'ip public et le port du client"""
+        ip = requests.get("https://api.ipify.org?format=text").text  # Récupère l'IP publique
+        port = self.socket.getsockname()[1]  # Récupère le port local utilisé pour communiquer avec le serveur
+        return (ip, port)
+
 
 
     def format_data_without_content(self, order_code):
@@ -90,8 +91,7 @@ class Client(threading.Thread):
             # Vérifier si le dictionnaire est vide
             if data_content:  # Si data_content n'est pas vide, on continue
                 ip_port, coords = list(data_content.items())[0]  # Extraire la clé et les coordonnées
-                ip = ip_port[0]
-                data_base.player_pos[ip] = coords  # met a jour dans la base de données
+                data_base.player_pos[ip_port] = coords  # met a jour dans la base de données
 
 
     def disconnect(self):
