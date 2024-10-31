@@ -100,9 +100,6 @@ class ThreadForClient(threading.Thread):
         """
             Exécute les différentes commandes en fonction des données reçues.
         """
-        
-        print(data)
-        
         if data == _pcs.codes["PlayerDisconnect"]:
             self.remove_client()
             print(f"Client {self.address} a demandé la déconnexion.")
@@ -113,6 +110,7 @@ class ThreadForClient(threading.Thread):
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
+                print("player position")
                 try:
                     """recupère la position et l'enregistre"""
                     position_string = content_string.strip('()')
