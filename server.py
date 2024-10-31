@@ -65,7 +65,6 @@ class Server:
         data = data.encode("utf-8")
 
         for client_conn in self.clients_id:
-            print(f"client_conn: {client_conn}; clients_id_len: {len(self.clients_id)}")
             try:
                 client_conn.send(data)  # envoie les données via chaque connexion de client
             except BrokenPipeError as e:
