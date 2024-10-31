@@ -2,7 +2,6 @@
 
 """
     TODO: 
-        prise en charge des vrai coordonées du joueur
         actualiser en temps reel les coordonées du joueur
         actualiser les coordonées des autres joueurs
 """

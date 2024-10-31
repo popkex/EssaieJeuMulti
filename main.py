@@ -9,16 +9,23 @@ class Game:
     def __init__(self):
         self.screen = Screen()
         self.player = Entity(self, position=(50, 50), scale=200)
-        self.internet_manager = InternetManager(self)
+        self.internet_manager = InternetManager()
 
         self.is_running = True
 
-    def run(self):
-        while self.is_running:
-            self.screen.window.fill(False)
-            self.player.draw()
+    def refresh_screen(self):
+        """redessine tout l'écran"""
+        self.screen.window.fill(False)
+        self.player.draw()
 
-            pygame.display.flip()
+        pygame.display.flip()
+
+    def run(self):
+        """La bouche de jeu"""
+        self.internet_manager.start(self)
+
+        while self.is_running:
+            self.refresh_screen()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
