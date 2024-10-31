@@ -151,7 +151,7 @@ class GameDataSender(threading.Thread):
             for player_pos in self.server.data_base.player_pos:
                 players_pos.append(player_pos)
 
-            code_and_players_pos = ("PPos", players_pos).encode('utf8')
+            code_and_players_pos = f"PPos, {players_pos}".encode('utf8')
             self.server.send_data_to_clients(code_and_players_pos)
 
 
