@@ -63,6 +63,11 @@ class Server:
             client_thread = ThreadForClient(self, conn, address)
             client_thread.start()
 
+    def send_data_to_clients(self, data):
+        data = data.encode("utf-8")
+        self.socket.send(data)
+
+
 
 class ThreadForClient(threading.Thread):
 
@@ -99,9 +104,11 @@ class ThreadForClient(threading.Thread):
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
-                """tente de recuperer les coordonnées"""
+                """recupère la position et l'enregistre"""
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
+                self.server.data_base.player_pos.self.address = position  # enregistre la position du joueur
+                print(self.server.data_base.player_pos)
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
@@ -120,7 +127,6 @@ class ThreadForClient(threading.Thread):
             print(f"Client {self.address} est déconnecter")
 
 
-
 class GameDataSender(threading.Thread):
 
     def __init__(self, server):
@@ -129,8 +135,9 @@ class GameDataSender(threading.Thread):
         self.server = server
         self.data_base = self.server.data_base
 
-    def group_data(self):
-        pass
+    def regroup_data(self):
+        players_pos = self.server.player_pos
+        self.server.send
 
 
 
