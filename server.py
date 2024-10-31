@@ -69,11 +69,11 @@ class Server:
     def send_data_to_clients(self, data):
         data = data.encode("utf-8")
 
+        print(data)
         try:
             self.socket.send(data)
-            print(data)
-        except BrokenPipeError:
-            pass
+        except BrokenPipeError as e:
+            print("error " + e)
 
 
 
