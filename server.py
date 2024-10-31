@@ -68,7 +68,10 @@ class Server:
 
     def send_data_to_clients(self, data):
         data = data.encode("utf-8")
-        self.socket.send(data)
+        try:
+            self.socket.send(data)
+        except BrokenPipeError:
+            pass
 
 
 
