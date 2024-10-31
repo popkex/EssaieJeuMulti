@@ -46,6 +46,9 @@ class Server:
 
         print(f"Le serveur est démarré sur {hostname}:{port}")
 
+        self.game_data_sender = GameDataSender()
+        self.game_data_sender.start()
+
         # self.start_verification_thread()  # Démarre le thread de vérification des clients connectés
 
     # def start_verification_thread(self):
@@ -135,15 +138,21 @@ class GameDataSender(threading.Thread):
         self.server = server
         self.data_base = self.server.data_base
 
+    def run(self):
+        self.regroup_data()
+
     def regroup_data(self):
-        print("regroup data...")
-        players_pos = []
+        while True:
+            time.sleep(0.05)
 
-        for player_pos in self.server.player_pos:
-            players_pos.append(player_pos)
+            print("regroup data...")
+            players_pos = []
 
-        code_and_players_pos = ("PPos", players_pos).encode('utf8')
-        self.server.send_data_to_clients(code_and_players_pos)
+            for player_pos in self.server.player_pos:
+                players_pos.append(player_pos)
+
+            code_and_players_pos = ("PPos", players_pos).encode('utf8')
+            self.server.send_data_to_clients(code_and_players_pos)
 
 
 
