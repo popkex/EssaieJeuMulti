@@ -16,7 +16,11 @@ class Game:
     def refresh_screen(self):
         """redessine tout l'écran"""
         self.screen.window.fill(False)
-        self.player.draw()
+
+        player_pos, other_players_pos = self.internet_manager.get_players_position()
+        print(f"player_pos: {player_pos} other_players_pos: {other_players_pos}")
+        self.player.draw(player_pos)
+        self.screen.draw_players(other_players_pos)
 
         pygame.display.flip()
 

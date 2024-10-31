@@ -12,3 +12,8 @@ class Screen:
         txt_surface = font.render(text, False, (255, 255, 255))
 
         self.window.blit(txt_surface, (0, 0))
+
+    def draw_players(self, players_pos):
+        """Dessine les joueurs"""
+        for player_id, position in players_pos:
+            pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], 50, 50))

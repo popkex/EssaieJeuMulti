@@ -8,7 +8,7 @@
 
 import socket
 import threading
-import time
+import requests
 import ast
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
@@ -18,7 +18,11 @@ host, port = ('89.168.57.22', 49352)
 
 @dataclass
 class DataBase:
-    PlayerPosition: Tuple[float, float] = field(default_factory=tuple)  # Format :(x, y)
+    player_pos: Dict[Tuple[str, int], Tuple[float, float]] = field(default_factory=dict)  # Format : {(ip, port): (x, y)}
+
+
+data_base = DataBase()
+
 
 class Client(threading.Thread):
     def __init__(self, game):
@@ -38,6 +42,16 @@ class Client(threading.Thread):
             self.socket.close()  # Fermer le socket en cas d'échec de connexion
 
 
+    def get_players_position(self):
+        return list(data_base.player_pos.items())  # list() pour transformer le dic en list // .items() pour recupere a la fois la clé mais aussi la donnée
+
+    def get_my_ip(self):
+        """Recupère l'ip public du client"""
+        response = requests.get("https://api.ipify.org?format=text")
+        response.raise_for_status()  # Vérifie que la requête est réussie
+        return response.text
+
+
     def format_data_without_content(self, order_code):
         """Format et envoie les codes au server"""
         data = _pcs.codes[order_code].encode('utf8')
@@ -53,7 +67,6 @@ class Client(threading.Thread):
                 data = data_to_send.encode('utf8')
 
                 self.socket.send(data)
-                # Ici, nous n'encode pas encore, juste une préparation
             else:
                 print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(content)}\033[0m")
 
@@ -78,7 +91,7 @@ class Client(threading.Thread):
             if data_content:  # Si data_content n'est pas vide, on continue
                 ip_port, coords = list(data_content.items())[0]  # Extraire la clé et les coordonnées
                 ip = ip_port[0]
-                result = [ip, coords]  # Créer la structure finale dans le format voulu
+                data_base.player_pos[ip] = coords  # met a jour dans la base de données
 
 
     def disconnect(self):

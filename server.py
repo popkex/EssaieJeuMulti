@@ -24,7 +24,7 @@ class DataBase:
     # Informations des joueurs
     player_name: Dict[str, str] = field(default_factory=dict)  # Format : {ip: name}
     player_ip: Dict[str, str] = field(default_factory=dict)    # Format : {name: ip}
-    player_pos: Dict[str, Tuple[float, float]] = field(default_factory=dict)  # Format : {ip: (x, y)}
+    player_pos: Dict[Tuple[str, int], Tuple[float, float]] = field(default_factory=dict)  # Format : {(ip, port): (x, y)}
 
 
 data_base = DataBase()
@@ -118,6 +118,7 @@ class ThreadForClient(threading.Thread):
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
                 data_base.player_pos[self.address] = position  # enregistre la position du joueur
+                print(data_base.player_pos.items())
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
