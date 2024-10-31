@@ -108,7 +108,7 @@ class ThreadForClient(threading.Thread):
         else:
             """si l'ordre contient des données"""
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
-
+    
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
                 try:
                     """recupère la position et l'enregistre"""
