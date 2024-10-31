@@ -68,6 +68,7 @@ class Server:
 
     def send_data_to_clients(self, data):
         data = data.encode("utf-8")
+
         try:
             self.socket.send(data)
         except BrokenPipeError:
@@ -108,13 +109,12 @@ class ThreadForClient(threading.Thread):
         else:
             """si l'ordre contient des données"""
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
-    
+
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
                 """recupère la position et l'enregistre"""
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
                 self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
-                print(self.server.data_base.player_pos)
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
@@ -143,18 +143,15 @@ class GameDataSender(threading.Thread):
         self.data_base = self.server.data_base
 
     def run(self):
+        print("run")
         self.regroup_data()
 
     def regroup_data(self):
+        """Envoie les données importantes aux clients"""
         while True:
-            time.sleep(0.05)
+            time.sleep(0.05)  # evite la surcharge
 
-            players_pos = []
-
-            for player_pos in self.server.data_base.player_pos:
-                players_pos.append(player_pos)
-
-            code_and_players_pos = f"PPos, {players_pos}"
+            code_and_players_pos = f"PPos, {self.server.data_base.player_pos}"
             self.server.send_data_to_clients(code_and_players_pos)
 
 
