@@ -95,6 +95,7 @@ class ThreadForClient(threading.Thread):
         elif data == _pcs.codes["PlayerConnect"]:
             self.register_client()
         else:
+            print('des datas')
             """si l'ordre contient des données"""
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
