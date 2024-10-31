@@ -118,7 +118,6 @@ class ThreadForClient(threading.Thread):
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
                 data_base.player_pos[self.address] = position  # enregistre la position du joueur
-                print(data_base.player_pos.items())
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
