@@ -84,7 +84,6 @@ class ThreadForClient(threading.Thread):
                 break
 
         self.remove_client()  # Supprime le client lorsque la communication est interrompue
-        print(f"Client {self.address} déconnecté et retiré de la liste.")
 
     def execute_order(self, data):
         """
@@ -119,6 +118,7 @@ class ThreadForClient(threading.Thread):
 
         if self.address in self.server.clients_id:
             self.server.clients_id.remove(self.address)  # Retire le client de la liste
+
         print(f"Client {self.address} est déconnecter")
 
 
