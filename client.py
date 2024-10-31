@@ -28,7 +28,7 @@ class Client(threading.Thread):
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Créer le socket
-        self.socket.settimeout(0.05)  # ajoute un timeout pour eviter le bloquage
+        self.socket.settimeout(1)  # ajoute un timeout pour eviter le bloquage
 
         try:
             self.socket.connect((host, port))  # Connecter le socket
@@ -86,7 +86,7 @@ class Client(threading.Thread):
             try:
                 self.get_order()
             except socket.timeout:
-                continue
+                pass
             except Exception as e:
                 print(f"Erreur dans get_order(): {e}")
                 self.socket.close()

@@ -113,11 +113,14 @@ class ThreadForClient(threading.Thread):
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
-                """recupère la position et l'enregistre"""
-                position_string = content_string.strip('()')
-                position = tuple(map(float, position_string.split(',')))
-                self.server.data_base.player_pos.self.address = position  # enregistre la position du joueur
-                print(self.server.data_base.player_pos)
+                try:
+                    """recupère la position et l'enregistre"""
+                    position_string = content_string.strip('()')
+                    position = tuple(map(float, position_string.split(',')))
+                    self.server.data_base.player_pos.self.address = position  # enregistre la position du joueur
+                    print(self.server.data_base.player_pos)
+                except ValueError as e:
+                    print(e)
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
