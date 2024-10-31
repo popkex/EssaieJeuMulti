@@ -46,20 +46,17 @@ class Client(threading.Thread):
                 print(f"Data sent: {order_code}")
             else:
                 if order_code == "PositionPlayer":
+                    print("Player Position")
                     # Vérification si data_content est un tuple de deux floats
                     if isinstance(data_content, tuple) and len(data_content) == 2:
-                        # Vérifier que chaque élément est un float
-                        if all(isinstance(i, float) for i in data_content):
-                            # Préparer la structure de données à encoder
-                            data_to_send = f"{_pcs.codes[order_code][0]}|{data_content}"
-                            data = data_to_send.encode('utf8')
+                        # Préparer la structure de données à encoder
+                        data_to_send = f"{_pcs.codes[order_code][0]}|{data_content}"
+                        data = data_to_send.encode('utf8')
 
-                            print(f"Data sent: {data}")
-                            self.socket.send(data)
-                            print(f"Data sent: {data}")
-                            # Ici, nous n'encode pas encore, juste une préparation
-                        else:
-                            print(f"\033[31mLe type des éléments du tuple n'est pas correct,\033[34m type(data_content): {type(data_content)}\033[0m")
+                        print(f"Data sent: {data}")
+                        self.socket.send(data)
+                        print(f"Data sent: {data}")
+                        # Ici, nous n'encode pas encore, juste une préparation
                     else:
                         print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(data_content)}\033[0m")
 
@@ -77,7 +74,7 @@ class Client(threading.Thread):
 
     def send_update(self):
         player_position = self.game.player.position
-        self.send_order("PlayerPosition", player_position)
+        self.send_order("PositionPlayer", player_position)
 
     def get_order(self):
         data = self.socket.recv(1024).decode('utf8')  # Recevoir des données du serveur

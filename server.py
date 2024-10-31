@@ -96,7 +96,6 @@ class ThreadForClient(threading.Thread):
         elif data == _pcs.codes["PlayerConnect"]:
             self.register_client()
         else:
-            print('des datas')
             """si l'ordre contient des données"""
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
@@ -104,7 +103,6 @@ class ThreadForClient(threading.Thread):
                 """tente de recuperer les coordonnées"""
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
-                print(f"New pos get: {position} for {self.address}")
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
