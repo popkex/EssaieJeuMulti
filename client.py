@@ -90,12 +90,11 @@ class Client(threading.Thread):
         self.connect()
 
         while self.is_connected:
-            print("ok")
             try:
                 self.get_order()
                 print("Order received")  # Pour voir si get_order() passe correctement
             except socket.timeout:
-                print("Aucune donnée reçue (timeout), en attente...")
+                pass
             except Exception as e:
                 print(f"Erreur dans get_order(): {e}")
                 self.socket.close()
