@@ -100,6 +100,9 @@ class ThreadForClient(threading.Thread):
         """
             Exécute les différentes commandes en fonction des données reçues.
         """
+        
+        print(data)
+        
         if data == _pcs.codes["PlayerDisconnect"]:
             self.remove_client()
             print(f"Client {self.address} a demandé la déconnexion.")
