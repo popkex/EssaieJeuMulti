@@ -143,7 +143,6 @@ class GameDataSender(threading.Thread):
         self.data_base = self.server.data_base
 
     def run(self):
-        print("run")
         self.regroup_data()
 
     def regroup_data(self):
@@ -151,6 +150,7 @@ class GameDataSender(threading.Thread):
         while True:
             time.sleep(0.05)  # evite la surcharge
 
+            print("run")
             code_and_players_pos = f"PPos, {self.server.data_base.player_pos}"
             self.server.send_data_to_clients(code_and_players_pos)
 
