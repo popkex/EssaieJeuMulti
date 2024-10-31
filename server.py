@@ -68,13 +68,14 @@ class Server:
             client_thread.start()
 
     def send_data_to_clients(self, data):
+        """envoyer les données a un client spécifique (avec sa connection)"""
         data = data.encode("utf-8")
 
-        print(data)
-        try:
-            self.socket.send(data)
-        except BrokenPipeError as e:
-            print(f"error: {e}")
+        for client_conn in self.clients_id:
+            try:
+                client_conn.send(data)  # envoie les données via chaque connexion de client
+            except BrokenPipeError as e:
+                print(f"error: {e}")
 
 
 
@@ -122,18 +123,18 @@ class ThreadForClient(threading.Thread):
 
     def register_client(self):
         """Enregistre le client si ce n'est pas déjà fait."""
-        if self.address not in self.server.clients_id:
-            self.server.clients_id.append(self.address)
+        if self.conn not in self.server.clients_id:
+            self.server.clients_id.append(self.conn)  # Ajouter la connexion
             print(f"Client {self.address} connecté.")
 
     def remove_client(self):
-        """supprime un client"""
-        self.conn.close()  # Ferme la connexion
-
-        if self.address in self.server.clients_id:
-            self.server.clients_id.remove(self.address)  # Retire le client de la liste
+        """Supprime un client"""
+        if self.conn in self.server.clients_id:
+            self.server.clients_id.remove(self.conn)  # Retirer la connexion
+            self.conn.close()  # Fermer la connexion proprement
             data_base.player_pos.pop(self.address, None)
-            print(f"Client {self.address} est déconnecter")
+            print(f"Client {self.address} est déconnecté")
+
 
 
 class GameDataSender(threading.Thread):
