@@ -115,7 +115,6 @@ class ThreadForClient(threading.Thread):
                     position_string = content_string.strip('()')
                     position = tuple(map(float, position_string.split(',')))
                     self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
-                    print(self.server.data_base.player_pos)
                 except all as e:
                     print(e)
             else:
@@ -133,6 +132,7 @@ class ThreadForClient(threading.Thread):
 
         if self.address in self.server.clients_id:
             self.server.clients_id.remove(self.address)  # Retire le client de la liste
+            self.server.data_base.player_pos.remove(self.address)
             print(f"Client {self.address} est déconnecter")
 
 
