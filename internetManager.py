@@ -25,7 +25,6 @@ class InternetManager:
 
             if ip == self.my_ip:
                 local_player_pos = coords
-                continue
             else:
                 oser_players_pos.append((ip, coords))
 

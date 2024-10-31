@@ -90,8 +90,13 @@ class Client(threading.Thread):
 
             # Vérifier si le dictionnaire est vide
             if data_content:  # Si data_content n'est pas vide, on continue
-                ip_port, coords = list(data_content.items())[0]  # Extraire la clé et les coordonnées
-                data_base.player_pos[ip_port] = coords  # met a jour dans la base de données
+                data_content = list(data_content.items())  # transforme data_content en liste pour pouvoir travailler dessus plus facilement
+
+                data_base.player_pos.clear()  # reset la position de tout les jouers pour supprimer ceux qui ne sont plus co
+
+                for data in data_content:
+                    ip_port, coords = list(data)  # Extraire la clé et les coordonnées
+                    data_base.player_pos[ip_port] = coords  # met a jour dans la base de données
 
 
     def disconnect(self):

@@ -8,7 +8,7 @@ pygame.init()
 class Game:
     def __init__(self):
         self.screen = Screen()
-        self.player = Entity(self, position=(50, 50), scale=200)
+        self.player = Entity(self, position=(300, 300), scale=15)
         self.internet_manager = InternetManager()
 
         self.is_running = True
@@ -18,7 +18,6 @@ class Game:
         self.screen.window.fill(False)
 
         player_pos, other_players_pos = self.internet_manager.get_players_position()
-        print(f"player_pos: {player_pos} other_players_pos: {other_players_pos}")
         self.player.draw(player_pos)
         self.screen.draw_players(other_players_pos)
 

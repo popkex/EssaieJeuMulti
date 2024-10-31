@@ -1,7 +1,7 @@
 import pygame
 
 class Entity:
-    def __init__(self, game, position=(0, 0), scale=50):
+    def __init__(self, game, position=(0, 0), scale=5):
         self.game = game
         self.screen = self.game.screen
         self.position = position
