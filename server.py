@@ -27,15 +27,16 @@ class DataBase:
     player_pos: Dict[str, Tuple[float, float]] = field(default_factory=dict)  # Format : {ip: (x, y)}
 
 
+data_base = DataBase()
+
+
 # lance le server et recupère toute les données qu'on lui envoie
 class Server:
 
     def __init__(self):
-        self.data_base = DataBase()
-
-        host = self.data_base.host
-        port = self.data_base.port
-        self.clients_id = self.data_base.clients_id
+        host = data_base.host
+        port = data_base.port
+        self.clients_id = data_base.clients_id
 
         self.socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # créer le socket
         self.socket.bind((host, port))  # s'associe à l'adresse et le port
@@ -73,7 +74,7 @@ class Server:
         try:
             self.socket.send(data)
         except BrokenPipeError as e:
-            print("error " + e)
+            print(f"error: {e}")
 
 
 
@@ -115,7 +116,7 @@ class ThreadForClient(threading.Thread):
                 """recupère la position et l'enregistre"""
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
-                self.server.data_base.player_pos[self.address] = position  # enregistre la position du joueur
+                data_base.player_pos[self.address] = position  # enregistre la position du joueur
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")
 
@@ -131,7 +132,7 @@ class ThreadForClient(threading.Thread):
 
         if self.address in self.server.clients_id:
             self.server.clients_id.remove(self.address)  # Retire le client de la liste
-            self.server.data_base.player_pos.pop(self.address, None)
+            data_base.player_pos.pop(self.address, None)
             print(f"Client {self.address} est déconnecter")
 
 
@@ -141,7 +142,6 @@ class GameDataSender(threading.Thread):
         super().__init__()
 
         self.server = server
-        self.data_base = self.server.data_base
 
     def run(self):
         self.regroup_data()
@@ -151,7 +151,7 @@ class GameDataSender(threading.Thread):
         while True:
             time.sleep(0.05)  # evite la surcharge
 
-            code_and_players_pos = f"PPos, {self.server.data_base.player_pos}"
+            code_and_players_pos = f"PPos, {data_base.player_pos}"
             self.server.send_data_to_clients(code_and_players_pos)
 
 
