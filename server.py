@@ -136,6 +136,7 @@ class GameDataSender(threading.Thread):
         self.data_base = self.server.data_base
 
     def regroup_data(self):
+        print("regroup data...")
         players_pos = []
 
         for player_pos in self.server.player_pos:
