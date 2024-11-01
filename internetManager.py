@@ -31,13 +31,3 @@ class InternetManager:
                 oser_players_pos.append((ip, coords))
 
         return local_player_pos, oser_players_pos
-
-
-    def force_send_update(self):
-        self.client_thread.send_update()
-
-    def force_send_player_position(self, position=None):
-        if position:
-            self.client_thread.send_player_position(position)
-        else:
-            self.client_thread.send_player_position()

@@ -15,8 +15,6 @@ class Entity:
 
         self.image = pygame.draw.rect(self.screen.window, (255, 255, 255), (self.position[0], self.position[1], self.scale, self.scale))
 
-        self.game.internet_manager.force_send_player_position(self.position)  # force l'actualisation de la position du joueur
-
 
     def move(self, position):
         """Déplace le joueur"""
