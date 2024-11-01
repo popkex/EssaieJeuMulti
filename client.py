@@ -109,8 +109,19 @@ class Client(threading.Thread):
 
     def send_update(self):
         """Envoie l'ensemble des données utiles a actualiser le jeu"""
-        player_position = self.game.player.position
-        self.send_order("PositionPlayer", player_position)
+        self.send_player_position()
+
+    def send_player_position(self, position=None, send=True):
+        """Envoie la position du joueur"""
+        if position:
+            player_position = position  # Si une position est fournie, on la utilise
+        else:
+            player_position = self.game.player.position
+
+        if send:
+            self.send_order("PositionPlayer", player_position)
+        else:
+            return player_position
 
 
     def get_order(self):

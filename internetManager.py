@@ -9,11 +9,13 @@ class InternetManager:
 
         self.my_ip = self.client_thread.get_my_id()  # recupère et stock l'ip public du client
 
+
     def stop(self):
         """Arrete la synchronisation client server"""
         if self.client_thread.is_alive():
             self.client_thread.disconnect()  # Déconnexion propre
             self.client_thread.join()  # Attendre que le thread se termine
+
 
     def get_players_position(self) -> tuple[float, float]:
         """Renvoie la position du joueur local et des autres joueurs"""
@@ -29,3 +31,13 @@ class InternetManager:
                 oser_players_pos.append((ip, coords))
 
         return local_player_pos, oser_players_pos
+
+
+    def force_send_update(self):
+        self.client_thread.send_update()
+
+    def force_send_player_position(self, position=None):
+        if position:
+            self.client_thread.send_player_position(position)
+        else:
+            self.client_thread.send_player_position()
