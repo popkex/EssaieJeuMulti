@@ -31,3 +31,13 @@ class InternetManager:
                 oser_players_pos.append((ip, coords))
 
         return local_player_pos, oser_players_pos
+
+
+    def force_update(self):
+        try:
+            if self.client_thread.is_connected and not self.client_thread.socket._closed:
+                self.client_thread.send_update()
+        except Exception as e:
+            print(f"Erreur dans force_update(): {e}")
+            if not self.client_thread.socket._closed:
+                self.client_thread.socket.close()

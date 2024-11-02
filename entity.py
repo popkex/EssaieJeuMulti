@@ -16,8 +16,8 @@ class Entity:
         self.image = pygame.draw.rect(self.screen.window, (255, 255, 255), (self.position[0], self.position[1], self.scale, self.scale))
 
 
-    def move(self, position):
-        """Déplace le joueur"""
+    def move(self, position=None):
+        """Déplace le joueur sans l'afficher (permettre au server de s'actualiser)"""
         keys = pygame.key.get_pressed()
 
         if position:
@@ -26,8 +26,8 @@ class Entity:
             x, y = self.position
 
         if keys[pygame.K_UP]:
-            y += 5
+            y += 1
         if keys[pygame.K_DOWN]:
-            y -= 5
+            y -= 1
 
-        self.draw((x, y))
+        self.position = (x, y)
