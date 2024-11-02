@@ -1,5 +1,4 @@
 # coding:utf-8
-
 """
     TODO: 
         actualiser en temps reel les coordonées du joueur
@@ -12,7 +11,7 @@ import requests
 import ast
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
-from typing import List, Dict, Tuple
+from typing import Dict, Tuple
 
 host, port = ('89.168.57.22', 49352)
 
@@ -20,27 +19,18 @@ host, port = ('89.168.57.22', 49352)
 class DataBase:
     player_pos: Dict[Tuple[str, int], Tuple[float, float]] = field(default_factory=dict)  # Format : {(ip, port): (x, y)}
 
-
 data_base = DataBase()
-
 
 class Client(threading.Thread):
     def __init__(self, game):
         super().__init__()
         self.game = game
         self.is_connected = True
+        self.lock = threading.Lock()
 
         print("Lancement de la connexion au serveur...")
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Créer le socket
-        self.socket.settimeout(1)  # ajoute un timeout pour eviter le bloquage
-
-        try:
-            self.socket.connect((host, port))  # Connecter le socket
-            print("Client connecté !")
-        except Exception as e:
-            print(f"Connexion au serveur échouée ! Erreur: {e}")
-            self.socket.close()  # Fermer le socket en cas d'échec de connexion
-
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Créer le socket en UDP
+        self.socket.settimeout(0.5)  # ajoute un timeout pour eviter le bloquage
 
     def get_players_position(self):
         return list(data_base.player_pos.items())  # list() pour transformer le dic en list // .items() pour recupere a la fois la clé mais aussi la donnée
@@ -51,70 +41,57 @@ class Client(threading.Thread):
         port = self.socket.getsockname()[1]  # Récupère le port local utilisé pour communiquer avec le serveur
         return (ip, port)
 
-
+    def get_socket(self):
+        return self.socket
 
     def format_data_without_content(self, order_code):
-        """Format et envoie les codes au server"""
+        """Format et envoie les codes au serveur"""
         data = _pcs.codes[order_code].encode('utf8')
-        self.socket.send(data)  # Utiliser send au lieu de sendto
+        self.socket.sendto(data, (host, port))  # Utiliser sendto avec UDP
 
     def format_data_with_content(self, order_code, content):
-        """Format et envoie les codes et les données au server"""
+        """Format et envoie les codes et les données au serveur"""
         if order_code == "PositionPlayer":
-            # Vérification si data_content est un tuple de deux floats
             if isinstance(content, tuple) and len(content) == 2:
                 # Préparer la structure de données à encoder
                 data_to_send = f"{_pcs.codes[order_code][0]}|{content}"
                 data = data_to_send.encode('utf8')
 
-                self.socket.send(data)
+                self.socket.sendto(data, (host, port))  # Utiliser sendto pour envoyer en UDP
             else:
                 print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(content)}\033[0m")
 
     def send_order(self, order_code, data_content=None):
         """Logique de formatage et d'envoie des données"""
         if order_code in _pcs.codes:
-            # si aucune donnée n'est donnée, considerer qu'il n'y en a pas a donner
             if not data_content:
                 self.format_data_without_content(order_code)
             else:
                 self.format_data_with_content(order_code, data_content)
 
-
     def execute_order(self, data_received):
-        """Extrès le code et les données puis execute l'ordre adequate"""  # oui je sais pas écrire mais oklm demande a chatgpt
-        order_code, data_content_str = data_received.split(", ", 1)  # Séparer le code du reste
+        """Extrès le code et les données puis execute l'ordre adéquate"""
+        order_code, data_content_str = data_received.split(", ", 1)
 
         if order_code == _pcs.codes["PositionPlayer"][0] and data_content_str:
-            data_content = ast.literal_eval(data_content_str)  # Convertir la chaîne en dictionnaire
+            data_content = ast.literal_eval(data_content_str)
 
-            # Vérifier si le dictionnaire est vide
-            if data_content:  # Si data_content n'est pas vide, on continue
-                data_content = list(data_content.items())  # transforme data_content en liste pour pouvoir travailler dessus plus facilement
-
-                data_base.player_pos.clear()  # reset la position de tout les jouers pour supprimer ceux qui ne sont plus co
+            if data_content:
+                data_content = list(data_content.items())
+                data_base.player_pos.clear()
 
                 for data in data_content:
-                    ip_port, coords = list(data)  # Extraire la clé et les coordonnées
-                    data_base.player_pos[ip_port] = coords  # met a jour dans la base de données
-
-
-    def disconnect(self):
-        self.send_order("PlayerDisconnect")
-        self.socket.close()  # Fermer le socket
-
-    def connect(self):
-        self.send_order("PlayerConnect")
-
+                    ip_port, coords = list(data)
+                    data_base.player_pos[ip_port] = coords
 
     def send_update(self):
-        """Envoie l'ensemble des données utiles a actualiser le jeu"""
+        """Envoie l'ensemble des données utiles à actualiser le jeu"""
         self.send_player_position()
 
     def send_player_position(self, position=None, send=True):
         """Envoie la position du joueur"""
         if position:
-            player_position = position  # Si une position est fournie, on la utilise
+            player_position = position
         else:
             player_position = self.game.player.position
 
@@ -123,36 +100,25 @@ class Client(threading.Thread):
         else:
             return player_position
 
-
     def get_order(self):
-        """Recupère toutes les données envoyers"""
-        data = self.socket.recv(1024).decode('utf8')  # Recevoir des données du serveur
-
-        if data:
-            self.execute_order(data)  # Traiter les données reçues
-
+        """Reçoit les données envoyées par le serveur"""
+        try:
+            data, _ = self.socket.recvfrom(1024)  # Recevoir des données depuis le serveur
+            data = data.decode('utf8')
+            if data:
+                self.execute_order(data)  # Traiter les données reçues
+        except socket.timeout:
+            pass
+        except Exception as e:
+            print(f"Erreur dans get_order(): {e}")
 
     def run(self):
         """Boucle d'actualisation"""
-        self.connect()
+        self.send_order("PlayerConnect")  # Envoie la demande de connexion (stateless en UDP)
 
         while self.is_connected:
             try:
                 self.get_order()
-            except socket.timeout:
-                pass
             except Exception as e:
-                print(f"Erreur dans get_order(): {e}")
-                self.socket.close()
+                print(f"Erreur dans la boucle d'actualisation : {e}")
                 break
-
-            try:
-                self.send_update()
-            except Exception as e:
-                print(f"Erreur dans send_update(): {e}")
-                self.socket.close()
-                break
-
-#----------------------------------------------------------------
-# client = Client()
-# client.run()
