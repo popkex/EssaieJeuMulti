@@ -30,7 +30,6 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
-            self.internet_manager.force_update()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
