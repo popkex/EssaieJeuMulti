@@ -2,6 +2,7 @@
 
 """
     TODO:
+        faire les collisions ici
         mettre en bleu clair les nouvelles connection et en bleufoncer les deconnections
 """
 
@@ -94,22 +95,47 @@ class ThreadForClient(threading.Thread):
         self.remove_client()  # Supprime le client lorsque la communication est interrompue
 
     def execute_order(self, data):
-        """
-            Exécute les différentes commandes en fonction des données reçues.
-        """
+        """Exécute les différentes commandes en fonction des données reçues."""
         if data == _pcs.codes["PlayerDisconnect"]:
             self.remove_client()
             print(f"Client {self.address} a demandé la déconnexion.")
         elif data == _pcs.codes["PlayerConnect"]:
             self.register_client()
         else:
-            """si l'ordre contient des données"""
+            """ici les ordres contiennent des données"""
             order_code, content_string = data.split('|')  # séprart l'ordre et les données
 
             if order_code == _pcs.codes["PositionPlayer"][0]:  # "PPos"
                 """recupère la position et l'enregistre"""
                 position_string = content_string.strip('()')
                 position = tuple(map(float, position_string.split(',')))
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                vérifier ici les collisions; définir les collisions dans le database
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
+                """
                 data_base.player_pos[self.address] = position  # enregistre la position du joueur
             else:
                 print("\033[31m" + f"L'ordre reçu n'est pas géré: {order_code}" + "\033[0m")

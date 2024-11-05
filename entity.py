@@ -13,6 +13,8 @@ class Entity:
         if position:
             self.position = position  # met à jour les positions
 
+        self.move()
+
         self.image = pygame.draw.rect(self.screen.window, (255, 255, 255), (self.position[0], self.position[1], self.scale, self.scale))
 
 

@@ -19,7 +19,6 @@ class Game:
 
         player_pos, other_players_pos = self.internet_manager.get_players_position()
         self.player.draw(player_pos)
-        self.player.move()
         self.screen.draw_players(other_players_pos)
 
         pygame.display.flip()
