@@ -7,6 +7,8 @@ class Entity:
         self.position = position
         self.scale = scale
 
+        self.velocity = 0.5
+
 
     def draw(self, position):
         """Dessine le joueur"""
@@ -28,12 +30,12 @@ class Entity:
             x, y = self.position
 
         if keys[pygame.K_UP]:
-            y -= 1
+            y -= self.velocity
         if keys[pygame.K_DOWN]:
-            y += 1
+            y += self.velocity
         if keys[pygame.K_LEFT]:
-            x -= 1
+            x -= self.velocity
         if keys[pygame.K_RIGHT]:
-            x += 1
+            x += self.velocity
 
         self.position = (x, y)

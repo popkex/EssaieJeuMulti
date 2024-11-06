@@ -14,13 +14,15 @@ class Game:
         self.game_physic = GamePhysic()
 
         self.is_running = True
+        self.clock = pygame.time.Clock()
 
     def refresh_screen(self):
         """redessine tout l'écran"""
         self.screen.window.fill(False)
 
-        player_pos, all_players_pos = self.internet_manager.get_players_position()
+        self.screen.draw_walls(self.game_physic.data_base.walls_collide)
 
+        player_pos, all_players_pos = self.internet_manager.get_players_position()
         self.player.move()
         self.screen.draw_players(all_players_pos)
 
@@ -37,6 +39,8 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False
+
+            self.clock.tick(120)
 
         self.internet_manager.stop()
         pygame.quit()
