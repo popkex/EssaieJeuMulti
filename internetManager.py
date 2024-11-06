@@ -20,17 +20,17 @@ class InternetManager:
     def get_players_position(self) -> tuple[float, float]:
         """Renvoie la position du joueur local et des autres joueurs"""
         local_player_pos = None
-        oser_players_pos = []
+        all_players_pos = []
 
         for data in self.client_thread.get_players_position():
             ip, coords = data
 
             if ip == self.my_ip:
                 local_player_pos = coords
-            else:
-                oser_players_pos.append((ip, coords))
 
-        return local_player_pos, oser_players_pos
+            all_players_pos.append((ip, coords))
+
+        return local_player_pos, all_players_pos
 
 
     def force_update(self):
