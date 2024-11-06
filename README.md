@@ -1,1 +1,1 @@
-readme
+expliquer comment fonctionne le jeu
