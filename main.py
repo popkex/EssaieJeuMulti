@@ -2,6 +2,7 @@ import pygame
 from screen import Screen
 from entity import Entity
 from internetManager import InternetManager
+from gamePhysics import GamePhysic
 
 pygame.init()
 
@@ -10,6 +11,7 @@ class Game:
         self.screen = Screen()
         self.player = Entity(self, position=(300, 300), scale=15)
         self.internet_manager = InternetManager()
+        self.game_physic = GamePhysic()
 
         self.is_running = True
 
@@ -18,7 +20,8 @@ class Game:
         self.screen.window.fill(False)
 
         player_pos, other_players_pos = self.internet_manager.get_players_position()
-        self.player.draw(player_pos)
+        # self.player.draw(player_pos)
+        self.player.move(player_pos)
         self.screen.draw_players(other_players_pos)
 
         pygame.display.flip()
@@ -29,6 +32,7 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
+            self.game_physic.collide((200, 200), (10, 20))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

@@ -28,8 +28,12 @@ class Entity:
             x, y = self.position
 
         if keys[pygame.K_UP]:
-            y += 1
-        if keys[pygame.K_DOWN]:
             y -= 1
+        if keys[pygame.K_DOWN]:
+            y += 1
+        if keys[pygame.K_LEFT]:
+            x -= 1
+        if keys[pygame.K_RIGHT]:
+            x += 1
 
         self.position = (x, y)
