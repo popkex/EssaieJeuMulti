@@ -1,6 +1,17 @@
 import pygame
 from dataclasses import dataclass
 
+
+
+
+"""
+TODO:
+    vérifier la distance pour generer ou non les collisions
+"""
+
+
+
+
 @dataclass
 class DataBase:
     walls_collide = []  # Sous la forme : [(x, y, w, h)]
