@@ -13,7 +13,7 @@ import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
 
-host, port = ('192.168.24.224', 49352)
+host, port = ('89.168.57.22', 49352)
 
 @dataclass
 class DataBase:
