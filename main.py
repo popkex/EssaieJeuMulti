@@ -32,7 +32,7 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
-            self.game_physic.collide((200, 200), (10, 20))
+            self.game_physic.collide(self.player.position, (10, 20))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

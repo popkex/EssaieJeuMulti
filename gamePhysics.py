@@ -21,23 +21,51 @@ class GamePhysic:
 
     def collide(self, entity_position, entity_size) -> str:
         """gerer les collision entre 2entités"""
+        zone_collide = []  # "left", "right", "top", "bottom"
+
         for wall_collide in self.data_base.walls_collide:
             # Récuperation des coordonées du mur
             wall_position = wall_collide[0:2]  # Recuperer x, y
             wall_size = wall_collide[2:4]  # recuperer w, h (largeur, hauteur)
 
-            if True:  # Vérifier la distance entre le mur et l'entité ici
-                # vérification de si l'entité touche le mur
-                ## si les 2 position x sont diff
-                if entity_position[0] != wall_position[0]:
-                    # Calculer l'espacement x entre les 2 positions
-                    if entity_position[0] > wall_position[0]:
-                        """regarde si la position du joueur est plus grande, donc se trouve a droite 
-                            faire le calcule adequate pour cela (x_spacing = entity_position[0] - wall_position[0] ou inverser les 2)
-                        """
-                else:
-                    """renvoyer, touche le mur a droite"""
+            # Calculer le centre en x et y du mur
+            center_wall_x = wall_position[0] + (wall_size[0] / 2)
+            center_wall_y = wall_position[1] + (wall_size[1] / 2)
 
-                ## si les 2 position y sont diff
-                if entity_position[1] != wall_position[1]:
-                    pass
+            # Calculer le centre en x et y de l'entité
+            center_entity_x = entity_position[0] + (entity_size[0] / 2)
+            center_entity_y = entity_position[1] + (entity_size[1] / 2)
+
+            if True:  # """""""""""""""""""""""""""""Vérifier la distance entre le mur et l'entité ici"""""""""""""""""""""""""""""
+                """quand le mur se trouve est suffisamment proche du joueur"""
+                # vérification de si l'entité touche le mur
+                if entity_position[0] < wall_position[0]:
+                    """quand l'entité se trouve a droite"""
+                    distance_center = center_wall_x - center_entity_x
+
+                    if -5 <= distance_center <= 10:
+                        zone_collide.append("right")
+
+                if entity_position[0] > wall_collide[0]:
+                    """quand l'entité se trouve a gauche"""
+                    distance_center = center_entity_x - center_wall_x
+
+                    if -5 <= distance_center <= 10:
+                        zone_collide.append("left")
+
+                if entity_position[1] < wall_position[1]:
+                    """quand l'entité se trouve en haut"""
+                    distance_center = center_wall_y - center_entity_y
+
+                    if -5 <= distance_center <= 10:
+                        zone_collide.append("top")
+
+                if entity_position[1] > wall_position[1]:
+                    """quand l'entité se trouve en bast"""
+                    distance_center = center_wall_y - center_entity_y
+
+                    if -5 <= distance_center <= 10:
+                        zone_collide.append("bottom")
+
+            print(zone_collide)
+            return zone_collide
