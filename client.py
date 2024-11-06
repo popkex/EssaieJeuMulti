@@ -13,7 +13,7 @@ import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
 
-host, port = ('192.168.9.224', 49352)
+host, port = ('192.168.24.224', 49352)
 
 @dataclass
 class DataBase:
@@ -70,7 +70,6 @@ class Client(threading.Thread):
                 data_to_send = f"{_pcs.codes[order_code][0]}|{content}"
                 data = data_to_send.encode('utf8')
 
-                print(socket)
                 self.socket.send(data)
             else:
                 print(f"\033[31mLe type de donnée fournie n'est pas correcte,\033[34m type(data_content): {type(content)}\033[0m")
@@ -149,3 +148,8 @@ class Client(threading.Thread):
                 print(f"Erreur dans get_order(): {e}")
                 self.socket.close()
                 break
+
+            try:
+                self.send_update()
+            except Exception as e:
+                print(f"Echec de l'envoie des données : {e}")
