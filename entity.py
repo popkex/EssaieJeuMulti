@@ -7,7 +7,7 @@ class Entity:
         self.position = position
         self.scale = scale
 
-        self.velocity = 0.5
+        self.velocity = 1
 
 
     def draw(self, position):
@@ -38,4 +38,17 @@ class Entity:
         if keys[pygame.K_RIGHT]:
             x += self.velocity
 
+        zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))
+
+        # Applique les collisions pour ajuster la position
+        if "left" in zone_collide and x < self.position[0]:
+            x = self.position[0]  # Bloque le déplacement vers la gauche
+        if "right" in zone_collide and x > self.position[0]:
+            x = self.position[0]  # Bloque le déplacement vers la droite
+        if "top" in zone_collide and y < self.position[1]:
+            y = self.position[1]  # Bloque le déplacement vers le haut
+        if "bottom" in zone_collide and y > self.position[1]:
+            y = self.position[1]  # Bloque le déplacement vers le bas
+
+        # Mise à jour de la position finale
         self.position = (x, y)

@@ -9,9 +9,9 @@ pygame.init()
 class Game:
     def __init__(self):
         self.screen = Screen()
-        self.player = Entity(self, position=(300, 300), scale=15)
+        self.player = Entity(self, position=(300, 300), scale=50)
         self.internet_manager = InternetManager()
-        self.game_physic = GamePhysic()
+        self.game_physic = GamePhysic(self.screen)
 
         self.is_running = True
         self.clock = pygame.time.Clock()
@@ -23,10 +23,10 @@ class Game:
         self.screen.draw_walls(self.game_physic.data_base.walls_collide)
 
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.player.move()
         self.screen.draw_players(all_players_pos)
+        self.player.move()
 
-        pygame.display.flip()
+        if not self.game_physic.debug_mode: pygame.display.flip()
 
     def run(self):
         """La bouche de jeu"""
@@ -34,11 +34,16 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
-            self.game_physic.collide(self.player.position, (10, 20))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F6:
+                        self.game_physic.debug_mode = not self.game_physic.debug_mode
+                        if self.game_physic.debug_mode: print("Debug Mode Activé !") 
+                        else: print("Debug Mode désactiver !")
 
             self.clock.tick(120)
 
