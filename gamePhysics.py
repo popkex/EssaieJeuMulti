@@ -37,7 +37,7 @@ class GamePhysic:
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (10, 10, 100, 100)  # (x, y, w, h)
+            (340, 260, 300, 200)  # (x, y, w, h)
         ]
 
     #region Collide
@@ -78,6 +78,20 @@ class GamePhysic:
             cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
             dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
 
+            dist_respct = []
+            dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+            if not math.sqrt((aex - awx)**2 + (aey - awy)**2) < dist_max:
+                dist_respct.append(False)
+            dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+            if not math.sqrt((bex - bwx)**2 + (bey - bwy)**2) < dist_max:
+                dist_respct.append(False)
+            dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+            if not math.sqrt((cex - cwx)**2 + (cey - cwy)**2) < dist_max:
+                dist_respct.append(False)
+            dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+            if not math.sqrt((dex - dwx)**2 + (dey - dwy)**2) < dist_max:
+                dist_respct.append(False)
+
             #region Debug
             if self.debug_mode:
                 # print(f"a: {aex, aey}, b: {bex, bey}, c: {cex, cey}, d: {dex, dey}")
@@ -86,27 +100,29 @@ class GamePhysic:
                 self.screen.draw_line((aex, aey), (dex, dey), color=(255, 255, 00))
                 self.screen.draw_line((bex, bey), (cex, cey), color=(255, 255, 00))
 
-                self.screen.draw_line((awx, awy), (bwx, bwy))
-                self.screen.draw_line((cwx, cwy), (dwx, dwy))
-                self.screen.draw_line((awx, awy), (dwx, dwy))
-                self.screen.draw_line((bwx, bwy), (cwx, cwy))
+                if not dist_respct:
+                    self.screen.draw_line((awx, awy), (bwx, bwy))
+                    self.screen.draw_line((cwx, cwy), (dwx, dwy))
+                    self.screen.draw_line((awx, awy), (dwx, dwy))
+                    self.screen.draw_line((bwx, bwy), (cwx, cwy))
 
                 pygame.display.flip()
             #endregion
 
-            # Check les collisions
-            ## collision bas entité (haut mur)
-            if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
-                zone_collide.append("bottom")
-            ## collision haut entité (bas mur)
-            if (dwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (dwx - self.secure_dist_wall_collide < bex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < bey < cwy + self.secure_dist_wall_collide):
-                zone_collide.append("top")
-            ## collision droit entité (gauche mur)
-            if (awx - self.secure_dist_wall_collide < bex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < bey < dwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < dwy + self.secure_dist_wall_collide):
-                zone_collide.append("right")
-            ## collision gauche entité (droite mur)
-            if (bwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
-                zone_collide.append("left")
+            if not dist_respct:
+                # Check les collisions
+                ## collision bas entité (haut mur)
+                if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
+                    zone_collide.append("bottom")
+                ## collision haut entité (bas mur)
+                if (dwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (dwx - self.secure_dist_wall_collide < bex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < bey < cwy + self.secure_dist_wall_collide):
+                    zone_collide.append("top")
+                ## collision droit entité (gauche mur)
+                if (awx - self.secure_dist_wall_collide < bex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < bey < dwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < dwy + self.secure_dist_wall_collide):
+                    zone_collide.append("right")
+                ## collision gauche entité (droite mur)
+                if (bwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
+                    zone_collide.append("left")
 
         return zone_collide
 
