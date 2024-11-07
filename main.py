@@ -57,7 +57,7 @@ class Game:
                         if self.game_physic.debug_mode: print("Debug Mode Activé !") 
                         else: print("Debug Mode désactiver !")
 
-            self.clock.tick(120)
+            self.clock.tick(60)
 
         self.internet_manager.stop()
         pygame.quit()

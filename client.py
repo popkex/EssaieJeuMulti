@@ -1,10 +1,5 @@
 # coding:utf-8
-"""
-    TODO: 
-        actualiser en temps reel les coordonées du joueur
-        actualiser les coordonées des autres joueurs
-"""
-
+import pygame
 import socket
 import threading
 import requests
@@ -29,7 +24,7 @@ class Client(threading.Thread):
         super().__init__()
         self.game = game
         self.is_connected = True
-        self.lock = threading.Lock()
+        self.clock = pygame.time.Clock()
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Créer le socket
@@ -168,3 +163,5 @@ class Client(threading.Thread):
                 self.send_update()
             except Exception as e:
                 print(f"Echec de l'envoie des données : {e}")
+
+            self.clock.tick(60)
