@@ -33,6 +33,7 @@ class Client(threading.Thread):
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Créer le socket
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self.socket.settimeout(0.5)  # ajoute un timeout pour eviter le bloquage
 
         try:
