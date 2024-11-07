@@ -37,7 +37,7 @@ class GamePhysic:
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (340, 260, 300, 200)  # (x, y, w, h)
+            (300, 10, 200, 700)  # (x, y, w, h)
         ]
 
     #region Collide
@@ -80,17 +80,19 @@ class GamePhysic:
 
             dist_respct = []
             dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
-            if not math.sqrt((aex - awx)**2 + (aey - awy)**2) < dist_max:
+            if math.sqrt((aex - awx)**2 + (aey - awy)**2) < dist_max:
                 dist_respct.append(False)
             dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
-            if not math.sqrt((bex - bwx)**2 + (bey - bwy)**2) < dist_max:
+            if math.sqrt((bex - bwx)**2 + (bey - bwy)**2) < dist_max:
                 dist_respct.append(False)
             dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
-            if not math.sqrt((cex - cwx)**2 + (cey - cwy)**2) < dist_max:
+            if math.sqrt((cex - cwx)**2 + (cey - cwy)**2) < dist_max:
                 dist_respct.append(False)
             dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
-            if not math.sqrt((dex - dwx)**2 + (dey - dwy)**2) < dist_max:
+            if math.sqrt((dex - dwx)**2 + (dey - dwy)**2) < dist_max:
                 dist_respct.append(False)
+
+            print(dist_respct)
 
             #region Debug
             if self.debug_mode:
@@ -100,7 +102,7 @@ class GamePhysic:
                 self.screen.draw_line((aex, aey), (dex, dey), color=(255, 255, 00))
                 self.screen.draw_line((bex, bey), (cex, cey), color=(255, 255, 00))
 
-                if not dist_respct:
+                if dist_respct:
                     self.screen.draw_line((awx, awy), (bwx, bwy))
                     self.screen.draw_line((cwx, cwy), (dwx, dwy))
                     self.screen.draw_line((awx, awy), (dwx, dwy))
@@ -109,7 +111,7 @@ class GamePhysic:
                 pygame.display.flip()
             #endregion
 
-            if not dist_respct:
+            if dist_respct:
                 # Check les collisions
                 ## collision bas entité (haut mur)
                 if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
