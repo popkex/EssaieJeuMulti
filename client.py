@@ -9,6 +9,7 @@ import socket
 import threading
 import requests
 import ast
+import re
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
@@ -83,24 +84,40 @@ class Client(threading.Thread):
             else:
                 self.format_data_with_content(order_code, data_content)
 
-
     def execute_order(self, data_received):
-        """Extrès le code et les données puis execute l'ordre adequate"""  # oui je sais pas écrire mais oklm demande a chatgpt
+        """Extrait le code et les données puis exécute l'ordre adéquat"""
+
+        # Utilisation d'une expression régulière pour capturer uniquement la première occurrence
         order_code, data_content_str = data_received.split(", ", 1)  # Séparer le code du reste
 
-        if order_code == _pcs.codes["PositionPlayer"][0] and data_content_str:
-            data_content = ast.literal_eval(data_content_str)  # Convertir la chaîne en dictionnaire
+        match = re.search(r"(\{.+?\})", data_content_str)
+        
+        if match:
+            # Extraire l'expression correspondant aux données
+            data_content_str = match.group(1)
+
+            try:
+                # Convertir la chaîne en dictionnaire
+                data_content = ast.literal_eval(data_content_str)
+            except (SyntaxError, ValueError) as e:
+                print(f"Erreur de parsing des données: {e}")
+                return
 
             # Vérifier si le dictionnaire est vide
             if data_content:  # Si data_content n'est pas vide, on continue
                 data_content = list(data_content.items())  # transforme data_content en liste pour pouvoir travailler dessus plus facilement
 
-                data_base.player_pos.clear()  # reset la position de tout les jouers pour supprimer ceux qui ne sont plus co
+                if order_code == _pcs.codes["PlayerConnect"]:
+                    data_base.player_pos.clear()  # reset la position de tous les joueurs pour supprimer ceux qui ne sont plus connectés
 
-                for data in data_content:
-                    ip_port, coords = list(data)  # Extraire la clé et les coordonnées
-                    data_base.player_pos[ip_port] = coords  # met a jour dans la base de données
-
+                    for data in data_content:
+                        if len(data) == 2:  # Vérifie que data a exactement deux éléments
+                            ip_port, coords = data  # Extraire l'IP et les coordonnées
+                            data_base.player_pos[ip_port] = coords  # Met à jour dans la base de données
+                        else:
+                            print("Donnée mal formatée:", data)
+        else:
+            print("Erreur : aucune donnée 'PPos, { ... }' trouvée dans data_received")
 
     def disconnect(self):
         self.send_order("PlayerDisconnect")
