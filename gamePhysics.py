@@ -26,20 +26,21 @@ class GamePhysic:
         self.data_base = DataBase()
         self.screen = screen
 
-        self.secure_dist_collide = 2
-        self.dist_generate_collide = 200
+        self.secure_dist_wall_collide = 2
+        self.secure_dist_player_collide = 10
+        self.dist_generate_wall_collide = 200
 
         self.init_walls()
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (100, 100, 100, 100)  # (x, y, w, h)
+            # (0, 0, 100, 100)  # (x, y, w, h)
         ]
 
     #region Collide
-    def collide(self, entity_position, entity_size, is_player=False, entity2_position=None, entity2_size=None) -> str:
+    def collide(self, entity_position, entity_size, is_player=False) -> str:
         if is_player:
-            return self.entity_collide(entity_position, entity_size, entity2_position, entity2_size)
+            return self.entity_collide(entity_position, entity_size)
         else:
             return self.wall_collide(entity_position, entity_size)
 
@@ -92,16 +93,16 @@ class GamePhysic:
 
             # Check les collisions
             ## collision bas entité (haut mur)
-            if (awx - self.secure_dist_collide < dex < bwx + self.secure_dist_collide and awy - self.secure_dist_collide < dey < bwy + self.secure_dist_collide) or (awx - self.secure_dist_collide < cex < bwx + self.secure_dist_collide and awy - self.secure_dist_collide < cey < bwy + self.secure_dist_collide):
+            if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
                 zone_collide.append("bottom")
             ## collision haut entité (bas mur)
-            if (dwx - self.secure_dist_collide < aex < cwx + self.secure_dist_collide and dwy - self.secure_dist_collide < aey < cwy + self.secure_dist_collide) or (dwx - self.secure_dist_collide < bex < cwx + self.secure_dist_collide and dwy - self.secure_dist_collide < bey < cwy + self.secure_dist_collide):
+            if (dwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (dwx - self.secure_dist_wall_collide < bex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < bey < cwy + self.secure_dist_wall_collide):
                 zone_collide.append("top")
             ## collision droit entité (gauche mur)
-            if (awx - self.secure_dist_collide < bex < dwx + self.secure_dist_collide and awy - self.secure_dist_collide < bey < dwy + self.secure_dist_collide) or (awx - self.secure_dist_collide < cex < dwx + self.secure_dist_collide and awy - self.secure_dist_collide < cey < dwy + self.secure_dist_collide):
+            if (awx - self.secure_dist_wall_collide < bex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < bey < dwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < dwy + self.secure_dist_wall_collide):
                 zone_collide.append("right")
             ## collision gauche entité (droite mur)
-            if (bwx - self.secure_dist_collide < aex < cwx + self.secure_dist_collide and bwy - self.secure_dist_collide < aey < cwy + self.secure_dist_collide) or (bwx - self.secure_dist_collide < dex < cwx + self.secure_dist_collide and bwy - self.secure_dist_collide < dey < cwy + self.secure_dist_collide):
+            if (bwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
                 zone_collide.append("left")
 
         return zone_collide
@@ -109,9 +110,9 @@ class GamePhysic:
     def entity_collide(self, entity_position, entity_size):
         """gerer les collision entre une entité et un mur"""
         zone_collide = []  # "left", "right", "top", "bottom"
-        self.data_base.players_collide.clear()
 
         for player_collide in self.data_base.players_collide:
+            print(True)
             """summary
                 point a = top_left of the entity or player
                 point b = top_right of the entity or player
@@ -157,16 +158,16 @@ class GamePhysic:
 
             # Check les collisions
             ## collision bas entité (haut mur)
-            if (apx - self.secure_dist_collide < dex < bpx + self.secure_dist_collide and apy - self.secure_dist_collide < dey < bpy + self.secure_dist_collide) or (apx - self.secure_dist_collide < cex < bpx + self.secure_dist_collide and apy - self.secure_dist_collide < cey < bpy + self.secure_dist_collide):
+            if (apx - self.secure_dist_player_collide < dex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < dey < bpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < bpy + self.secure_dist_player_collide):
                 zone_collide.append("bottom")
             ## collision haut entité (bas mur)
-            if (dpx - self.secure_dist_collide < aex < cpx + self.secure_dist_collide and dpy - self.secure_dist_collide < aey < cpy + self.secure_dist_collide) or (dpx - self.secure_dist_collide < bex < cpx + self.secure_dist_collide and dpy - self.secure_dist_collide < bey < cpy + self.secure_dist_collide):
+            if (dpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (dpx - self.secure_dist_player_collide < bex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < bey < cpy + self.secure_dist_player_collide):
                 zone_collide.append("top")
             ## collision droit entité (gauche mur)
-            if (apx - self.secure_dist_collide < bex < dpx + self.secure_dist_collide and apy - self.secure_dist_collide < bey < dpy + self.secure_dist_collide) or (apx - self.secure_dist_collide < cex < dpx + self.secure_dist_collide and apy - self.secure_dist_collide < cey < dpy + self.secure_dist_collide):
+            if (apx - self.secure_dist_player_collide < bex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < bey < dpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < dpy + self.secure_dist_player_collide):
                 zone_collide.append("right")
             ## collision gauche entité (droite mur)
-            if (bpx - self.secure_dist_collide < aex < cpx + self.secure_dist_collide and bpy - self.secure_dist_collide < aey < cpy + self.secure_dist_collide) or (bpx - self.secure_dist_collide < dex < cpx + self.secure_dist_collide and bpy - self.secure_dist_collide < dey < cpy + self.secure_dist_collide):
+            if (bpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (bpx - self.secure_dist_player_collide < dex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < dey < cpy + self.secure_dist_player_collide):
                 zone_collide.append("left")
 
         return zone_collide

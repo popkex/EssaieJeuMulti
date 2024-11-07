@@ -19,6 +19,8 @@ class Screen:
         """Dessine les joueurs"""
         entity_size = (50, 50)
 
+        physics_database.players_collide.clear()
+
         if players_pos:
             for player_id, position in players_pos:
                 # dessine le joueur
