@@ -23,7 +23,7 @@ class Game:
         self.screen = Screen()
         self.player = Entity(self, position=(300, 300), scale=50)
         self.internet_manager = InternetManager()
-        self.game_physic = GamePhysic(self.screen)
+        self.game_physic = GamePhysic(self.screen, self)
 
         self.is_running = True
         self.clock = pygame.time.Clock()
@@ -35,7 +35,7 @@ class Game:
         self.screen.draw_walls(self.game_physic.data_base.walls_collide)
 
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.draw_players(self.game_physic.data_base, all_players_pos)
+        self.screen.draw_players(self.game_physic.data_base, all_players_pos, player_pos)
         self.player.move()
 
         if not self.game_physic.debug_mode: pygame.display.flip()

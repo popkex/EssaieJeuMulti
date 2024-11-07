@@ -15,7 +15,7 @@ class Screen:
         self.window.blit(txt_surface, (0, 0))
 
 
-    def draw_players(self, physics_database, players_pos):
+    def draw_players(self, physics_database, players_pos, local_player_pos):
         """Dessine les joueurs"""
         entity_size = (50, 50)
 
@@ -28,15 +28,16 @@ class Screen:
                 pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], entity_size[0], entity_size[1]))
 
                 # ajoute les collisions
-                (x, y), (w, h) = position, entity_size
-                physics_database.players_collide.append((x, y, w, h))
+                if players_pos != local_player_pos:
+                    (x, y), (w, h) = position, entity_size
+                    physics_database.players_collide.append((x, y, w, h))
 
     def draw_walls(self, walls_pos):
         for wall in walls_pos:
             pygame.draw.rect(self.window, (255, 0, 0), pygame.Rect(walls_pos[0][0], walls_pos[0][1], walls_pos[0][2], walls_pos[0][3]))
 
-    def draw_line(self, start_line, stop_line):
-        pygame.draw.line(self.window, (0, 0, 255), start_line, stop_line, width=5)
+    def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
+        pygame.draw.line(self.window, color, start_line, stop_line, width=5)
 
     def draw_rect(self, color, pos, size):
         pygame.draw.rect(self.window, color, (pos[0], pos[1], size[0], size[1]))
