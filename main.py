@@ -35,7 +35,7 @@ class Game:
         self.screen.draw_walls(self.game_physic.data_base.walls_collide)
 
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.draw_players(self.game_physic.data_base.walls_collide, all_players_pos)
+        self.screen.draw_players(self.game_physic.data_base, all_players_pos)
         self.player.move()
 
         if not self.game_physic.debug_mode: pygame.display.flip()

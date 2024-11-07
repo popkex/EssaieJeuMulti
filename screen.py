@@ -15,7 +15,7 @@ class Screen:
         self.window.blit(txt_surface, (0, 0))
 
 
-    def draw_players(self, walls, players_pos):
+    def draw_players(self, physics_database, players_pos):
         """Dessine les joueurs"""
         entity_size = (50, 50)
 
@@ -27,7 +27,7 @@ class Screen:
 
                 # ajoute les collisions
                 (x, y), (w, h) = position, entity_size
-                walls.append((x, y, w, h))
+                physics_database.players_collide.append((x, y, w, h))
 
     def draw_walls(self, walls_pos):
         for wall in walls_pos:
