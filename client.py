@@ -107,15 +107,12 @@ class Client(threading.Thread):
             if data_content:  # Si data_content n'est pas vide, on continue
                 data_content = list(data_content.items())  # transforme data_content en liste pour pouvoir travailler dessus plus facilement
 
-                if order_code == _pcs.codes["PlayerConnect"]:
+                if order_code == _pcs.codes["PositionPlayer"][0]:
                     data_base.player_pos.clear()  # reset la position de tous les joueurs pour supprimer ceux qui ne sont plus connectés
 
                     for data in data_content:
-                        if len(data) == 2:  # Vérifie que data a exactement deux éléments
-                            ip_port, coords = data  # Extraire l'IP et les coordonnées
-                            data_base.player_pos[ip_port] = coords  # Met à jour dans la base de données
-                        else:
-                            print("Donnée mal formatée:", data)
+                        ip_port, coords = data  # Extraire l'IP et les coordonnées
+                        data_base.player_pos[ip_port] = coords  # Met à jour dans la base de données
         else:
             print("Erreur : aucune donnée 'PPos, { ... }' trouvée dans data_received")
 

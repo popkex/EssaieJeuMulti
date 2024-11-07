@@ -15,12 +15,19 @@ class Screen:
         self.window.blit(txt_surface, (0, 0))
 
 
-    def draw_players(self, players_pos):
+    def draw_players(self, walls, players_pos):
         """Dessine les joueurs"""
+        entity_size = (50, 50)
+
         if players_pos:
             for player_id, position in players_pos:
-                self.draw_rect(color=(255, 255, 255), pos=position, size=(50, 50))
-                pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], 50, 50))
+                # dessine le joueur
+                self.draw_rect(color=(255, 255, 255), pos=position, size=entity_size)
+                pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], entity_size[0], entity_size[1]))
+
+                # ajoute les collisions
+                (x, y), (w, h) = position, entity_size
+                walls.append((x, y, w, h))
 
     def draw_walls(self, walls_pos):
         for wall in walls_pos:
