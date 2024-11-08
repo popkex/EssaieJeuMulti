@@ -30,14 +30,14 @@ class GamePhysic:
 
         self.secure_dist_wall_collide = 2
         self.secure_dist_player_collide = 10
-        self.dist_generate_wall_collide = 200
-        self.dist_generate_player_collide = 150
+        self.dist_generate_wall_collide = 75
+        self.dist_generate_player_collide = 75
 
         self.init_walls()
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (300, 200, 200, 200)  # (x, y, w, h)
+            (100, 100, 500, 500)  # (x, y, w, h)
         ]
 
     #region Collide
@@ -78,23 +78,33 @@ class GamePhysic:
             cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
             dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
 
-            """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+            """Verifie la distance pour activer ou desactiver les boites de collisions"""
+            dist_respct = False
+            # if (
+            #     (abs(aex - dwx) <= self.dist_generate_wall_collide and abs(aey - dwy) <= self.dist_generate_wall_collide) or  # Coin haut-gauche
+            #     (abs(bex - cwx) <= self.dist_generate_wall_collide and abs(bey - cwy) <= self.dist_generate_wall_collide) or  # Coin haut-droit
+            #     (abs(cex - bwx) <= self.dist_generate_wall_collide and abs(cey - bwy) <= self.dist_generate_wall_collide) or  # Coin bas-droit
+            #     (abs(dex - awx) <= self.dist_generate_wall_collide and abs(dey - awy) <= self.dist_generate_wall_collide)     # Coin bas-gauche
+            # ):
+            #     dist_respct = True
+            """ readatapter ca !
+            # Vérification de la proximité avec le côté gauche du mur
+            if abs(left_entity - awx) <= dist_threshold and top_entity < cwy and bottom_entity > awy:
+                proximity_detected = True
 
-            dist_max_x = self.dist_generate_wall_collide * (wall_size[0] % 50 + 1)
-            dist_max_y = self.dist_generate_wall_collide * ((wall_size[1]) % 50 + 1)
-            # la moitier de la largeur (en x et y)
-            midle_wall_x = abs(((awx + bwx) / 2 ) - (wall_size[0] / 2))
-            midle_wall_y = abs(((awy + dwy) / 2) - (wall_size[1] / 2))
-            midle_entity_x = abs(((aex + bex) / 2) - (entity_size[0] / 2))
-            midle_entity_y = abs((aey + dey) / 2 - (entity_size[1] / 2))
+            # Vérification de la proximité avec le côté droit du mur
+            if abs(right_entity - bwx) <= dist_threshold and top_entity < cwy and bottom_entity > awy:
+                proximity_detected = True
 
-            dist_respct = []
-            if abs(midle_wall_x - midle_entity_x) < dist_max_x and abs(midle_wall_y - midle_entity_y) < dist_max_y:
-                dist_respct.append(True)
-            if abs(midle_wall_x + midle_entity_x) < dist_max_x and abs(midle_wall_y + midle_entity_y) < dist_max_y:
-                dist_respct.append(True)
+            # Vérification de la proximité avec le côté haut du mur
+            if abs(top_entity - awy) <= dist_threshold and left_entity < bwx and right_entity > awx:
+                proximity_detected = True
 
-            print(dist_respct)
+            # Vérification de la proximité avec le côté bas du mur
+            if abs(bottom_entity - dwy) <= dist_threshold and left_entity < cwx and right_entity > dwx:
+                proximity_detected = True
+
+            """
 
             #region Debug
             if self.debug_mode:
