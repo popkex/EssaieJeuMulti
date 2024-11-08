@@ -37,7 +37,7 @@ class GamePhysic:
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (300, 10, 200, 700)  # (x, y, w, h)
+            (300, 200, 200, 200)  # (x, y, w, h)
         ]
 
     #region Collide
@@ -78,30 +78,23 @@ class GamePhysic:
             cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
             dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
 
-            dist_respct = []
-            # dist_max = self.dist_generate_wall_collide * (max(wall_size[0], wall_size[1]) % 50 + 1)
-            # if math.sqrt((aex - awx)**2 + (aey - awy)**2) < dist_max:
-            #     dist_respct.append(False)
-            # dist_max = self.dist_generate_wall_collide * (max(wall_size[0], wall_size[1]) % 50 + 1)
-            # if math.sqrt((bex - bwx)**2 + (bey - bwy)**2) < dist_max:
-            #     dist_respct.append(False)
-            # dist_max = self.dist_generate_wall_collide * (max(wall_size[0], wall_size[1]) % 50 + 1)
-            # if math.sqrt((cex - cwx)**2 + (cey - cwy)**2) < dist_max:
-            #     dist_respct.append(False)
-            # dist_max = self.dist_generate_wall_collide * (max(wall_size[0], wall_size[1]) % 50 + 1)
-            # if math.sqrt((dex - dwx)**2 + (dey - dwy)**2) < dist_max:
-            #     dist_respct.append(False)
+            """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-            dist_max = self.dist_generate_wall_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+            dist_max_x = self.dist_generate_wall_collide * (wall_size[0] % 50 + 1)
+            dist_max_y = self.dist_generate_wall_collide * ((wall_size[1]) % 50 + 1)
             # la moitier de la largeur (en x et y)
-            midle_wall_x = (awx + bwx) / 2
-            midle_wall_y = (awy + dwy) / 2
-            midle_entity_x = (aex + bex) / 2
-            midle_entity_y = (aex + dex) / 2
+            midle_wall_x = abs(((awx + bwx) / 2 ) - (wall_size[0] / 2))
+            midle_wall_y = abs(((awy + dwy) / 2) - (wall_size[1] / 2))
+            midle_entity_x = abs(((aex + bex) / 2) - (entity_size[0] / 2))
+            midle_entity_y = abs((aey + dey) / 2 - (entity_size[1] / 2))
 
-            print(f"mid_w: {midle_wall_x, midle_wall_y}, mid_y: {midle_entity_x, midle_entity_y}")
+            dist_respct = []
+            if abs(midle_wall_x - midle_entity_x) < dist_max_x and abs(midle_wall_y - midle_entity_y) < dist_max_y:
+                dist_respct.append(True)
+            if abs(midle_wall_x + midle_entity_x) < dist_max_x and abs(midle_wall_y + midle_entity_y) < dist_max_y:
+                dist_respct.append(True)
 
-            # print(dist_respct)
+            print(dist_respct)
 
             #region Debug
             if self.debug_mode:
