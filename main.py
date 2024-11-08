@@ -5,9 +5,12 @@ TODO:
     - ajouter les collisions entre les joueurs
     - ajouter de la gravité : 
         - a reflechir mais surement une force qui va s'appliquer constament dans une direction 
+"""
 
-
-    erreur l30 screen.py, supprimer les anciens murs !!!!!!!!!!
+"""
+TODO ERREUR:
+    - l'activation/desactivation de la dedection des collisions avec les murs n'est pas bien:
+        - vérifier a partir de la moitier de la hauteur/largeur ?
 """
 
 import pygame
