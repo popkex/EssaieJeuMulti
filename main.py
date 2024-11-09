@@ -42,6 +42,7 @@ class Game:
         self.player.move()
 
         if not self.game_physic.debug_mode: pygame.display.flip()
+        else: self.screen.debug_mode(self.clock)
 
     def run(self):
         """La bouche de jeu"""
