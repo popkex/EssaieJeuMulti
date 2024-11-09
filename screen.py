@@ -32,9 +32,9 @@ class Screen:
                     (x, y), (w, h) = position, entity_size
                     physics_database.players_collide.append((x, y, w, h))
 
-    def draw_walls(self, walls_pos):
-        for wall in walls_pos:
-            pygame.draw.rect(self.window, (255, 0, 0), pygame.Rect(walls_pos[0][0], walls_pos[0][1], walls_pos[0][2], walls_pos[0][3]))
+    def draw_walls(self, walls_data):
+        for wall in walls_data:
+            pygame.draw.rect(self.window, wall[4], pygame.Rect(wall[0], wall[1], wall[2], wall[3]))
 
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
         pygame.draw.line(self.window, color, start_line, stop_line, width=5)
