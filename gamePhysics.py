@@ -78,33 +78,12 @@ class GamePhysic:
             cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
             dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
 
-            """Verifie la distance pour activer ou desactiver les boites de collisions"""
-            dist_respct = False
-            # if (
-            #     (abs(aex - dwx) <= self.dist_generate_wall_collide and abs(aey - dwy) <= self.dist_generate_wall_collide) or  # Coin haut-gauche
-            #     (abs(bex - cwx) <= self.dist_generate_wall_collide and abs(bey - cwy) <= self.dist_generate_wall_collide) or  # Coin haut-droit
-            #     (abs(cex - bwx) <= self.dist_generate_wall_collide and abs(cey - bwy) <= self.dist_generate_wall_collide) or  # Coin bas-droit
-            #     (abs(dex - awx) <= self.dist_generate_wall_collide and abs(dey - awy) <= self.dist_generate_wall_collide)     # Coin bas-gauche
-            # ):
-            #     dist_respct = True
-            """ readatapter ca !
-            # Vérification de la proximité avec le côté gauche du mur
-            if abs(left_entity - awx) <= dist_threshold and top_entity < cwy and bottom_entity > awy:
-                proximity_detected = True
-
-            # Vérification de la proximité avec le côté droit du mur
-            if abs(right_entity - bwx) <= dist_threshold and top_entity < cwy and bottom_entity > awy:
-                proximity_detected = True
-
-            # Vérification de la proximité avec le côté haut du mur
-            if abs(top_entity - awy) <= dist_threshold and left_entity < bwx and right_entity > awx:
-                proximity_detected = True
-
-            # Vérification de la proximité avec le côté bas du mur
-            if abs(bottom_entity - dwy) <= dist_threshold and left_entity < cwx and right_entity > dwx:
-                proximity_detected = True
-
             """
+            Vérifier la distance entre le joueur et le mur
+            pour le moment je n'est pas trouver de moyen opti pour le faire 
+            chercher un moyen opti pour le faire si cela pose probleme au niveau des performances
+            """
+            dist_respct = True
 
             #region Debug
             if self.debug_mode:
