@@ -33,7 +33,7 @@ class GamePhysic:
         self.dist_generate_wall_collide = 75
         self.dist_generate_player_collide = 75
 
-        self.gravity_force = 5
+        self.gravity_force = 1
 
         self.init_walls()
 
@@ -184,7 +184,10 @@ class GamePhysic:
         return zone_collide
     #endregion
 
-    # #region Gravity
-    # def gravity(self):
-    #     pass
-    # #endregion
+    #region Gravity
+    def gravity(self, velocity_force):
+        x, y = velocity_force
+        y += self.gravity_force
+
+        return (x, y)
+    #endregion

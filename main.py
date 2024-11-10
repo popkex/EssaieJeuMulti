@@ -24,11 +24,12 @@ pygame.init()
 class Game:
     def __init__(self):
         self.screen = Screen()
-        self.player = Entity(self, position=(300, 300), scale=50)
+        self.player = Entity(self, position=(300, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
 
         self.is_running = True
+        self.key_pressed = []
         self.clock = pygame.time.Clock()
 
     def refresh_screen(self):
@@ -50,16 +51,20 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False
 
                 if event.type == pygame.KEYDOWN:
+                    self.key_pressed.append(event.key)
+
                     if event.key == pygame.K_F6:
                         self.game_physic.debug_mode = not self.game_physic.debug_mode
                         if self.game_physic.debug_mode: print("Debug Mode Activé !") 
                         else: print("Debug Mode désactiver !")
+
+                if event.type == pygame.KEYUP:
+                    self.key_pressed.remove(event.key)
 
             self.clock.tick(60)
 

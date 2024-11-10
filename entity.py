@@ -8,6 +8,17 @@ class Entity:
         self.scale = scale
 
         self.velocity = 1
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.max_velocity_y = 5
+        self.max_velocity_x = 10
+        self.default_move_force_x = 10
+        self.default_move_force_y = 100
+        self.move_force_x = self.default_move_force_x
+        self.move_force_y = self.default_move_force_y
+        self.max_force_can_apply = 3
+        self.tuch_ground = False
+        self.player_as_jump = False
 
 
     def draw(self, position):
@@ -21,7 +32,7 @@ class Entity:
 
 
     def rectify_position(self, new_position, zone_collide):
-        # Applique les collisions pour ajuster la position
+        """Applique les collisions pour ajuster la position"""
         x, y = new_position
 
         if "left" in zone_collide and x < self.position[0]:
@@ -37,28 +48,64 @@ class Entity:
 
     def move(self, position=None):
         """Déplace le joueur sans l'afficher (permettre au server de s'actualiser)"""
-        keys = pygame.key.get_pressed()
-
         if position:
             x, y = position
         else:
             x, y = self.position
 
-        if keys[pygame.K_UP]:
-            y -= self.velocity
-        if keys[pygame.K_DOWN]:
-            y += self.velocity
-        if keys[pygame.K_LEFT]:
-            x -= self.velocity
-        if keys[pygame.K_RIGHT]:
-            x += self.velocity
+        """Calculer la force de deplacement"""
+        if pygame.K_UP in self.game.key_pressed:
+            self.velocity_y += -self.move_force_y
+        if pygame.K_LEFT in self.game.key_pressed:
+            self.velocity_x += -self.move_force_x
+        if pygame.K_RIGHT in self.game.key_pressed:
+            self.velocity_x += self.move_force_x
+        if not (pygame.K_RIGHT in self.game.key_pressed) and not (pygame.K_LEFT in self.game.key_pressed):
+            self.velocity_x = 0
+
+        """Vérifier et corriger si ca velocity si le joueur va trop vite"""
+        if self.velocity_y >= self.max_velocity_y:
+            self.velocity_y = self.max_velocity_y
+        elif self.velocity_y <= -self.max_velocity_y:
+            self.velocity_y = -self.max_velocity_y
+
+        print(f"velx: {self.velocity_x}; maxVelx: {self.max_velocity_x}")
+        if self.velocity_x >= self.max_velocity_x:
+            self.velocity_x = self.max_velocity_x
+        elif self.velocity_x <= -self.max_velocity_x:
+            self.velocity_x = -self.max_velocity_x
+        else:
+            self.velocity_x = 0
+
+        """Appliquer la gravité"""
+        self.velocity_x, self.velocity_y = self.game.game_physic.gravity((self.velocity_x, self.velocity_y))
+
+        """Applique la force de deplacement"""
+        x += self.velocity_x
+        y += self.velocity_y
+
+        # Reset la force quand le joueur touche le sol
+        if self.tuch_ground:
+            self.velocity_y = 0
+
+        """Applique les collisions"""
+        detect_is_ground = []
 
         # detection des collisions avec les murs
-        zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))
+        zone_collide = self.game.game_physic.collide((x, y), (self.scale, self.scale))
         first_corify_pos = self.rectify_position((x, y), zone_collide)
+        detect_is_ground.append(True if "bottom" in zone_collide else False)
+
         # detecte la collisions avec les joueurs
         zone_collide = self.game.game_physic.collide(entity_position=first_corify_pos, entity_size=(self.scale, self.scale), is_player=True)
         second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
+
+        # si le joueur touche le sol dire qu'il le touche
+        if True in detect_is_ground:
+            self.tuch_ground = True
+            self.player_as_jump = False
+        else:
+            self.tuch_ground = False
 
         # Mise à jour de la position finale
         self.position = second_corify_pos
