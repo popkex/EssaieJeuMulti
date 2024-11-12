@@ -28,7 +28,7 @@ class GamePhysic:
         self.data_base = DataBase()
         self.screen = screen
 
-        self.secure_dist_wall_collide = 2
+        self.secure_dist_wall_collide = 5
         self.secure_dist_player_collide = 10
         self.dist_generate_wall_collide = 75
         self.dist_generate_player_collide = 75

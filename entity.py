@@ -7,16 +7,16 @@ class Entity:
         self.position = position
         self.scale = scale
 
-        self.velocity = 1
+        self.velocity = 0.5
         self.velocity_x = 0
         self.velocity_y = 0
         self.max_velocity_y = 5
-        self.max_velocity_x = 10
+        self.max_velocity_x = 5
         self.default_move_force_x = 10
         self.default_move_force_y = 100
         self.move_force_x = self.default_move_force_x
         self.move_force_y = self.default_move_force_y
-        self.max_force_can_apply = 3
+
         self.tuch_ground = False
         self.player_as_jump = False
 
