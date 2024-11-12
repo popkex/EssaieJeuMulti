@@ -10,7 +10,7 @@ class Entity:
         self.velocity = 0.5
         self.velocity_x = 0
         self.velocity_y = 0
-        self.max_velocity_y = 5
+        self.max_velocity_y = 10
         self.max_velocity_x = 5
         self.default_move_force_x = 10
         self.default_move_force_y = 100
@@ -54,10 +54,11 @@ class Entity:
             x, y = self.position
 
         """Calculer la force de deplacement"""
-        if pygame.K_UP in self.game.key_pressed:
-            self.velocity_y += -self.move_force_y
+        if pygame.K_UP in self.game.key_pressed and self.tuch_ground:
+            self.velocity_y -= self.move_force_y
+            self.player_as_jump = True
         if pygame.K_LEFT in self.game.key_pressed:
-            self.velocity_x += -self.move_force_x
+            self.velocity_x -= self.move_force_x
         if pygame.K_RIGHT in self.game.key_pressed:
             self.velocity_x += self.move_force_x
         if not (pygame.K_RIGHT in self.game.key_pressed) and not (pygame.K_LEFT in self.game.key_pressed):
@@ -69,7 +70,6 @@ class Entity:
         elif self.velocity_y <= -self.max_velocity_y:
             self.velocity_y = -self.max_velocity_y
 
-        # print(f"velx: {self.velocity_x}; maxVelx: {self.max_velocity_x}")
         if self.velocity_x >= self.max_velocity_x:
             self.velocity_x = self.max_velocity_x
         elif self.velocity_x <= -self.max_velocity_x:
