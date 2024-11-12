@@ -1,5 +1,4 @@
 # coding:utf-8
-import pygame
 import socket
 import threading
 import requests
@@ -22,7 +21,6 @@ class Client(threading.Thread):
         super().__init__()
         self.game = game
         self.is_connected = True
-        self.clock = pygame.time.Clock()
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Utiliser UDP
@@ -71,7 +69,7 @@ class Client(threading.Thread):
         order_code, data_content_str = data_received.split(", ", 1)
 
         match = re.search(r"(\{.+?\})", data_content_str)
-        
+
         if match:
             data_content_str = match.group(1)
 
@@ -142,5 +140,3 @@ class Client(threading.Thread):
                 self.send_update()
             except Exception as e:
                 print(f"Echec de l'envoi des données : {e}")
-
-            self.clock.tick(60)

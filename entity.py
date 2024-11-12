@@ -69,7 +69,7 @@ class Entity:
         elif self.velocity_y <= -self.max_velocity_y:
             self.velocity_y = -self.max_velocity_y
 
-        print(f"velx: {self.velocity_x}; maxVelx: {self.max_velocity_x}")
+        # print(f"velx: {self.velocity_x}; maxVelx: {self.max_velocity_x}")
         if self.velocity_x >= self.max_velocity_x:
             self.velocity_x = self.max_velocity_x
         elif self.velocity_x <= -self.max_velocity_x:
