@@ -13,9 +13,7 @@ class InternetManager:
     def stop(self):
         """Arrete la synchronisation client server"""
         if self.client_thread.is_alive():
-            self.client_thread.disconnect()  # Déconnexion propre
-            self.client_thread.join()  # Attendre que le thread se termine
-
+            self.client_thread.is_connected = False
 
     def get_players_position(self) -> tuple[float, float]:
         """Renvoie la position du joueur local et des autres joueurs"""
