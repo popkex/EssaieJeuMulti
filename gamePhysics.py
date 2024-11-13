@@ -41,6 +41,10 @@ class GamePhysic:
     def init_walls(self):
         self.data_base.walls_collide = [
             (0, 700, 2000, 100, (0, 255, 0)),  # (x, y, w, h, (color))
+            (0, 600, 350, 50, (175, 175, 175)),
+            (0, 550, 250, 50, (175, 255, 0)),
+            (0, 500, 200, 50, (0, 255, 0)),
+            (300, 450, 75, 50, (0, 255, 0)),
         ]
 
     #region Collide
@@ -186,11 +190,9 @@ class GamePhysic:
     #endregion
 
     #region Gravity
-    def gravity(self, velocity_force):
-        player_jump = self.game.player.player_as_jump
-
+    def gravity(self, velocity_force, reset_force=False):
         x, y = velocity_force
-        y += self.gravity_force
+        y += self.current_gravity_force
 
         return (x, y)
     #endregion

@@ -46,6 +46,9 @@ class Entity:
 
         return (x, y)
 
+    def jump(self):
+        pass
+
     def move(self, position=None):
         """Déplace le joueur sans l'afficher (permettre au server de s'actualiser)"""
         if position:
