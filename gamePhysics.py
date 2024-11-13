@@ -28,7 +28,7 @@ class GamePhysic:
         self.data_base = DataBase()
         self.screen = screen
 
-        self.secure_dist_wall_collide = 5
+        self.secure_dist_wall_collide = 6
         self.secure_dist_player_collide = 10
         self.dist_generate_wall_collide = 75
         self.dist_generate_player_collide = 75
@@ -188,17 +188,9 @@ class GamePhysic:
     #region Gravity
     def gravity(self, velocity_force):
         player_jump = self.game.player.player_as_jump
-        use_jump_gravity = False
 
         x, y = velocity_force
-
-        if player_jump and y > 0:
-            use_jump_gravity = True
-
-        if use_jump_gravity:
-            y += self.gravity_jump_force
-        else:
-            y += self.gravity_force
+        y += self.gravity_force
 
         return (x, y)
     #endregion

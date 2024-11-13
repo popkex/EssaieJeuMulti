@@ -65,10 +65,11 @@ class Entity:
             self.velocity_x = 0
 
         """Vérifier et corriger si ca velocity si le joueur va trop vite"""
-        if self.velocity_y >= self.max_velocity_y:
-            self.velocity_y = self.max_velocity_y
-        elif self.velocity_y <= -self.max_velocity_y:
-            self.velocity_y = -self.max_velocity_y
+        if not self.player_as_jump and not self.tuch_ground:
+            if self.velocity_y >= self.max_velocity_y:
+                self.velocity_y = self.max_velocity_y
+            elif self.velocity_y <= -self.max_velocity_y:
+                self.velocity_y = -self.max_velocity_y
 
         if self.velocity_x >= self.max_velocity_x:
             self.velocity_x = self.max_velocity_x
