@@ -98,8 +98,8 @@ class Entity:
         detect_is_ground.append(True if "bottom" in zone_collide else False)
 
         # detecte la collisions avec les joueurs
-        zone_collide = self.game.game_physic.collide(entity_position=first_corify_pos, entity_size=(self.scale, self.scale), is_player=True)
-        second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
+        # zone_collide = self.game.game_physic.collide(entity_position=first_corify_pos, entity_size=(self.scale, self.scale), is_player=True)
+        # second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
 
         # si le joueur touche le sol dire qu'il le touche
         if True in detect_is_ground:
@@ -109,4 +109,4 @@ class Entity:
             self.tuch_ground = False
 
         # Mise à jour de la position finale
-        self.position = second_corify_pos
+        self.position = first_corify_pos
