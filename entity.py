@@ -13,9 +13,10 @@ class Entity:
         self.max_velocity_y = 10
         self.max_velocity_x = 5
         self.default_move_force_x = 10
-        self.default_move_force_y = 100
+        self.default_move_force_y = 10
         self.move_force_x = self.default_move_force_x
         self.move_force_y = self.default_move_force_y
+        self.jump_time = 0
 
         self.tuch_ground = False
         self.player_as_jump = False
@@ -46,9 +47,6 @@ class Entity:
 
         return (x, y)
 
-    def jump(self):
-        pass
-
     def move(self, position=None):
         """Déplace le joueur sans l'afficher (permettre au server de s'actualiser)"""
         if position:
@@ -58,8 +56,16 @@ class Entity:
 
         """Calculer la force de deplacement"""
         if pygame.K_UP in self.game.key_pressed and self.tuch_ground:
-            self.velocity_y -= self.move_force_y
-            self.player_as_jump = True
+            if not self.player_as_jump:
+                self.velocity_y -= self.move_force_y # Augmenter la force de saut initiale
+                self.jump_time = 0
+                self.player_as_jump = True
+
+        # Permettre au joueur de prolonger le saut en maintenant la touche UP
+        if pygame.K_UP in self.game.key_pressed and self.player_as_jump and self.jump_time < 10:
+            self.velocity_y -= 1  # Ajouter un petit boost
+            self.jump_time += 1
+
         if pygame.K_LEFT in self.game.key_pressed:
             self.velocity_x -= self.move_force_x
         if pygame.K_RIGHT in self.game.key_pressed:
@@ -82,15 +88,15 @@ class Entity:
             self.velocity_x = 0
 
         """Appliquer la gravité"""
-        self.velocity_x, self.velocity_y = self.game.game_physic.gravity((self.velocity_x, self.velocity_y))
+        if self.tuch_ground:
+            self.velocity_x, self.velocity_y = self.game.game_physic.gravity((self.velocity_x, self.velocity_y), reset_force=True)
+        else:
+            self.velocity_x, self.velocity_y = self.game.game_physic.gravity((self.velocity_x, self.velocity_y))
 
         """Applique la force de deplacement"""
         x += self.velocity_x
         y += self.velocity_y
 
-        # Reset la force quand le joueur touche le sol
-        if self.tuch_ground:
-            self.velocity_y = 0
 
         """Applique les collisions"""
         detect_is_ground = []

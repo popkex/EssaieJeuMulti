@@ -24,7 +24,7 @@ class GamePhysic:
 
     def __init__(self, screen, game):
         self.game=game
-        self.debug_mode = False
+        self.debug_mode = True
         self.data_base = DataBase()
         self.screen = screen
 
@@ -85,12 +85,11 @@ class GamePhysic:
             cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
             dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
 
-            """
-            Vérifier la distance entre le joueur et le mur
-            pour le moment je n'est pas trouver de moyen opti pour le faire 
-            chercher un moyen opti pour le faire si cela pose probleme au niveau des performances
-            """
-            dist_respct = True
+            distance = math.sqrt((aex - awx)**2 + (aey - awy)**2)
+            if distance > self.dist_generate_wall_collide:
+                dist_respected = True
+            else:
+                dist_respected = False
 
             #region Debug
             if self.debug_mode:
@@ -100,7 +99,7 @@ class GamePhysic:
                 self.screen.draw_line((aex, aey), (dex, dey), color=(255, 255, 00))
                 self.screen.draw_line((bex, bey), (cex, cey), color=(255, 255, 00))
 
-                if dist_respct:
+                if dist_respected:
                     self.screen.draw_line((awx, awy), (bwx, bwy))
                     self.screen.draw_line((cwx, cwy), (dwx, dwy))
                     self.screen.draw_line((awx, awy), (dwx, dwy))
@@ -109,7 +108,8 @@ class GamePhysic:
                 pygame.display.flip()
             #endregion
 
-            if dist_respct:
+
+            if dist_respected:
                 # Check les collisions
                 ## collision bas entité (haut mur)
                 if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
@@ -192,7 +192,15 @@ class GamePhysic:
     #region Gravity
     def gravity(self, velocity_force, reset_force=False):
         x, y = velocity_force
-        y += self.current_gravity_force
+
+        if reset_force:
+            self.gravity_force = 0
+        else:
+            # Augmenter la force de gravité progressivement
+            self.gravity_force = min(self.gravity_force + 0.025, 1)  # Limite à 2 pour éviter une chute trop rapide
+
+        y += self.gravity_force
 
         return (x, y)
+
     #endregion
