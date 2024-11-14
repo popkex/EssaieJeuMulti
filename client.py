@@ -88,8 +88,6 @@ class Client(threading.Thread):
                     for data in data_content:
                         ip_port, coords = data
                         data_base.player_pos[ip_port] = coords
-        else:
-            print("Erreur : aucune donnée 'PPos, { ... }' trouvée dans data_received")
 
     def disconnect(self):
         self.send_order("PlayerDisconnect")

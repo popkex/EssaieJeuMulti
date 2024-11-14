@@ -28,7 +28,7 @@ class GamePhysic:
         self.data_base = DataBase()
         self.screen = screen
 
-        self.secure_dist_wall_collide = 6
+        self.secure_dist_wall_collide = 2
         self.secure_dist_player_collide = 10
         self.dist_generate_wall_collide = 75
         self.dist_generate_player_collide = 75
@@ -40,7 +40,9 @@ class GamePhysic:
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (0, 700, 2000, 100, (0, 255, 0)),  # (x, y, w, h, (color))
+            (0, 700, 2000, 100, (0, 255, 0)),  # (x, y, w, h, (color)) /// le sol
+
+            # les murs pour éviter de sortir du niveau
             (0, 600, 350, 50, (175, 175, 175)),
             (0, 550, 250, 50, (175, 255, 0)),
             (0, 500, 200, 50, (0, 255, 0)),
@@ -55,76 +57,68 @@ class GamePhysic:
             return self.wall_collide(entity_position, entity_size)
 
     def wall_collide(self, entity_position, entity_size):
-        """gerer les collision entre une entité et un mur"""
-        zone_collide = []  # "left", "right", "top", "bottom"
+        """Gérer les collisions entre une entité et un mur de manière optimisée, avec debug."""
+        zone_collide = []
+        collided_wall = None
 
-        for wall_collide in self.data_base.walls_collide:
-            """summary
-                point a = top_left of the wall
-                point b = top_right of the wall
-                point c = bottom_right of the wall
-                point d = bottom_left of the wall
+        ex, ey = entity_position
+        ew, eh = entity_size
 
-                aex, aey, bex, bey, cex, cey, dex, dey => position du coin (a, b, c, d) suivie de e (entity) suivie de x ou y  
-                awx, awy, bwx, bwy, cwx, cwy, dwx, dwy => position du coin (a, b, c, d) suivie de w (wall) suivie de x ou y  
-            """
+        for wall in self.data_base.walls_collide:
+            wx, wy = wall[0:2]
+            ww, wh = wall[2:4]
 
-            # Récuperation des coordonées du mur
-            wall_position = wall_collide[0:2]  # Recuperer x, y
-            wall_size = wall_collide[2:4]  # recuperer w, h (largeur, hauteur)
+            entity_left = ex
+            entity_right = ex + ew
+            entity_top = ey
+            entity_bottom = ey + eh
 
-            # Récupérer les coins de l'entité
-            aex, aey = entity_position
-            bex, bey = entity_position[0] + entity_size[0], entity_position[1]
-            cex, cey = entity_position[0] + entity_size[0], entity_position[1] + entity_size[1]
-            dex, dey = entity_position[0], entity_position[1] + entity_size[1]
+            wall_left = wx
+            wall_right = wx + ww
+            wall_top = wy
+            wall_bottom = wy + wh
 
-            # Recupérer les coins du mur
-            awx, awy = wall_position
-            bwx, bwy = wall_position[0] + wall_size[0], wall_position[1]
-            cwx, cwy = wall_position[0] + wall_size[0], wall_position[1] + wall_size[1]
-            dwx, dwy = wall_position[0], wall_position[1] + wall_size[1]
-
-            distance = math.sqrt((aex - awx)**2 + (aey - awy)**2)
-            if distance > self.dist_generate_wall_collide:
-                dist_respected = True
+            if entity_right < wall_left or entity_left > wall_right or entity_bottom < wall_top or entity_top > wall_bottom:
+                wall_is_detected = False
             else:
-                dist_respected = False
+                wall_is_detected = True
 
             #region Debug
             if self.debug_mode:
-                # print(f"a: {aex, aey}, b: {bex, bey}, c: {cex, cey}, d: {dex, dey}")
-                self.screen.draw_line((aex, aey), (bex, bey), color=(255, 255, 00))
-                self.screen.draw_line((cex, cey), (dex, dey), color=(255, 255, 00))
-                self.screen.draw_line((aex, aey), (dex, dey), color=(255, 255, 00))
-                self.screen.draw_line((bex, bey), (cex, cey), color=(255, 255, 00))
+                # Dessiner la boîte englobante de l'entité
+                self.screen.draw_line((entity_left, entity_top), (entity_right, entity_top), color=(255, 255, 0))
+                self.screen.draw_line((entity_right, entity_top), (entity_right, entity_bottom), color=(255, 255, 0))
+                self.screen.draw_line((entity_right, entity_bottom), (entity_left, entity_bottom), color=(255, 255, 0))
+                self.screen.draw_line((entity_left, entity_bottom), (entity_left, entity_top), color=(255, 255, 0))
 
-                if dist_respected:
-                    self.screen.draw_line((awx, awy), (bwx, bwy))
-                    self.screen.draw_line((cwx, cwy), (dwx, dwy))
-                    self.screen.draw_line((awx, awy), (dwx, dwy))
-                    self.screen.draw_line((bwx, bwy), (cwx, cwy))
+                # Dessiner la boîte englobante du mur
+                if wall_is_detected:
+                    self.screen.draw_line((wall_left, wall_top), (wall_right, wall_top), color=(0, 255, 255))
+                    self.screen.draw_line((wall_right, wall_top), (wall_right, wall_bottom), color=(0, 255, 255))
+                    self.screen.draw_line((wall_right, wall_bottom), (wall_left, wall_bottom), color=(0, 255, 255))
+                    self.screen.draw_line((wall_left, wall_bottom), (wall_left, wall_top), color=(0, 255, 255))
 
                 pygame.display.flip()
             #endregion
 
-
-            if dist_respected:
-                # Check les collisions
-                ## collision bas entité (haut mur)
-                if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
+            # Déterminer les côtés de collision
+            if wall_is_detected:
+                if entity_bottom >= wall_top and entity_top < wall_top:
                     zone_collide.append("bottom")
-                ## collision haut entité (bas mur)
-                if (dwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (dwx - self.secure_dist_wall_collide < bex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < bey < cwy + self.secure_dist_wall_collide):
+                    collided_wall = wall
+                if entity_top <= wall_bottom and entity_bottom > wall_bottom:
                     zone_collide.append("top")
-                ## collision droit entité (gauche mur)
-                if (awx - self.secure_dist_wall_collide < bex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < bey < dwy + self.secure_dist_wall_collide) or (awx - self.secure_dist_wall_collide < cex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < dwy + self.secure_dist_wall_collide):
+                    collided_wall = wall
+                if entity_right >= wall_left and entity_left < wall_left:
                     zone_collide.append("right")
-                ## collision gauche entité (droite mur)
-                if (bwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
+                    collided_wall = wall
+                if entity_left <= wall_right and entity_right > wall_right:
                     zone_collide.append("left")
+                    collided_wall = wall
 
-        return zone_collide
+        print(f"zoneCollide: {zone_collide}; collided_wall: {collided_wall}")
+
+        return zone_collide, collided_wall
 
     def entity_collide(self, entity_position, entity_size):
         """gerer les collision entre une entité et un mur"""
@@ -197,7 +191,7 @@ class GamePhysic:
             self.gravity_force = 0
         else:
             # Augmenter la force de gravité progressivement
-            self.gravity_force = min(self.gravity_force + 0.025, 1)  # Limite à 2 pour éviter une chute trop rapide
+            self.gravity_force = min(self.gravity_force + 0.025, 0.5)  # Limite à 2 pour éviter une chute trop rapide
 
         y += self.gravity_force
 
