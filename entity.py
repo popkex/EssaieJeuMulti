@@ -35,8 +35,22 @@ class Entity:
 
         return (x, y)
 
+    def draw(self, position=None):
+        """Dessine le joueur avec la position mise à jour et applique le décalage de la caméra uniquement pour l'affichage"""
+        if position:
+            self.position = position  # met à jour les positions
+
+        self.move()  # Déplace le joueur (calculs de déplacements sans caméra)
+
+        # Dessine le joueur à sa position finale (applique la caméra seulement pour l'affichage)
+        player_rect = pygame.Rect(self.position[0], self.position[1], self.scale, self.scale)
+        player_rect_display = self.game.camera.apply(player_rect)  # Applique le décalage de la caméra uniquement pour l'affichage
+        pygame.draw.rect(self.screen.window, (255, 255, 255), player_rect_display)  # Affichage
+
     def move(self, position=None):
-        """Déplace le joueur sans l'afficher (permettre au server de s'actualiser)"""
+        if position:
+            print(position)
+        """Déplace le joueur sans appliquer la caméra (calculs de déplacement réels)"""
         keys = pygame.key.get_pressed()
 
         if position:
@@ -53,12 +67,13 @@ class Entity:
         if keys[pygame.K_RIGHT]:
             x += self.velocity
 
-        # detection des collisions avec les murs
+        # Détection des collisions avec les murs (sans décalage caméra)
         zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))
         first_corify_pos = self.rectify_position((x, y), zone_collide)
-        # detecte la collisions avec les joueurs
-        zone_collide = self.game.game_physic.collide(first_corify_pos, (self.scale, self.scale), is_player=True)
+
+        # Détection des collisions avec d'autres joueurs
+        zone_collide = self.game.game_physic.collide(first_corify_pos, (self.scale, self.scale), is_player=True, entity_id=self.game.internet_manager.get_my_id())
         second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
 
-        # Mise à jour de la position finale
+        # Mise à jour de la position du joueur
         self.position = second_corify_pos

@@ -23,8 +23,8 @@ pygame.init()
 
 class Game:
     def __init__(self):
-        self.screen = Screen()
-        self.player = Entity(self, position=(500, 0), scale=50)
+        self.screen = Screen(self)
+        self.player = Entity(self, position=(1000, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
 
@@ -33,17 +33,10 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def refresh_screen(self):
-        """redessine tout l'écran"""
-        self.screen.window.fill(False)
-
-        self.screen.draw_walls(self.game_physic.data_base.walls_collide)
-
+        """redessine tout l'écran avec la caméra"""
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.draw_players(self.game_physic.data_base, all_players_pos, player_pos)
+        self.screen.refresh_screen(player_pos, all_players_pos)
         self.player.move()
-
-        if not self.game_physic.debug_mode: pygame.display.flip()
-        else: self.screen.debug_mode(self.clock)
 
     def run(self):
         """La bouche de jeu"""

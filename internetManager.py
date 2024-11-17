@@ -32,6 +32,9 @@ class InternetManager:
         return local_player_pos, all_players_pos
 
 
+    def get_my_id(self):
+        return self.my_ip
+
     def force_update(self):
         try:
             if self.client_thread.is_connected and not self.client_thread.socket._closed:

@@ -24,7 +24,7 @@ class GamePhysic:
 
     def __init__(self, screen, game):
         self.game=game
-        self.debug_mode = True
+        self.debug_mode = False
         self.data_base = DataBase()
         self.screen = screen
 
@@ -71,10 +71,10 @@ class GamePhysic:
         pygame.display.flip()
 
 
-    #region Collide
-    def collide(self, entity_position, entity_size, is_player=False) -> str:
+    def collide(self, entity_position, entity_size, is_player=False, entity_id=None) -> str:
+        """Vérifie les collisions sans appliquer le décalage de la caméra"""
         if is_player:
-            return self.entity_collide(entity_position, entity_size)
+            return self.entity_collide(entity_position, entity_size, entity_id)
         else:
             return self.wall_collide(entity_position, entity_size)
 
@@ -145,12 +145,9 @@ class GamePhysic:
                 (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
                     zone_collide.append("left")
 
-        # Retourner les zones de collision et le mur
-        print(f"zoneCollide: {zone_collide}")
-
         return zone_collide
 
-    def entity_collide(self, entity_position, entity_size):
+    def entity_collide(self, entity_position, entity_size, entity_id=None):
         """gerer les collision entre une entité et un mur"""
         zone_collide = []  # "left", "right", "top", "bottom"
 
@@ -167,48 +164,49 @@ class GamePhysic:
                 entity est generalement le joueur local et player les joueurs distants
             """
 
-            player_position = player_collide[0:2]
-            player_size = player_collide[2:4]
+            if not self.game.internet_manager.get_my_id() == entity_id:
+                player_position = player_collide[0:2]
+                player_size = player_collide[2:4]
 
-            # Récupérer les coins de l'entité
-            aex, aey = entity_position
-            bex, bey = entity_position[0] + entity_size[0], entity_position[1]
-            cex, cey = entity_position[0] + entity_size[0], entity_position[1] + entity_size[1]
-            dex, dey = entity_position[0], entity_position[1] + entity_size[1]
+                # Récupérer les coins de l'entité
+                aex, aey = entity_position
+                bex, bey = entity_position[0] + entity_size[0], entity_position[1]
+                cex, cey = entity_position[0] + entity_size[0], entity_position[1] + entity_size[1]
+                dex, dey = entity_position[0], entity_position[1] + entity_size[1]
 
-            # Recupérer les coins du mur
-            apx, apy = player_position
-            bpx, bpy = player_position[0] + player_size[0], player_position[1]
-            cpx, cpy = player_position[0] + player_size[0], player_position[1] + player_size[1]
-            dpx, dpy = player_position[0], player_position[1] + player_size[1]
+                # Recupérer les coins du mur
+                apx, apy = player_position
+                bpx, bpy = player_position[0] + player_size[0], player_position[1]
+                cpx, cpy = player_position[0] + player_size[0], player_position[1] + player_size[1]
+                dpx, dpy = player_position[0], player_position[1] + player_size[1]
 
-            # calcule la distance de calcule pour les collisions avec le joueur
-            dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
-            if math.sqrt((aex - apx)**2 + (aey - apy)**2) < dist_max:
-                #region Debug
-                if self.debug_mode:
-                    # print(f"a: {aex, aey}, b: {bex, bey}, c: {cex, cey}, d: {dex, dey}")
-                    self.screen.draw_line((apx, apy), (bpx, bpy))
-                    self.screen.draw_line((cpx, cpy), (dpx, dpy))
-                    self.screen.draw_line((apx, apy), (dpx, dpy))
-                    self.screen.draw_line((bpx, bpy), (cpx, cpy))
+                # calcule la distance de calcule pour les collisions avec le joueur
+                dist_max = self.dist_generate_player_collide * (max(entity_size[0], entity_size[1]) % 50 + 1)
+                if math.sqrt((aex - apx)**2 + (aey - apy)**2) < dist_max:
+                    #region Debug
+                    if self.debug_mode:
+                        # print(f"a: {aex, aey}, b: {bex, bey}, c: {cex, cey}, d: {dex, dey}")
+                        self.screen.draw_line((apx, apy), (bpx, bpy))
+                        self.screen.draw_line((cpx, cpy), (dpx, dpy))
+                        self.screen.draw_line((apx, apy), (dpx, dpy))
+                        self.screen.draw_line((bpx, bpy), (cpx, cpy))
 
-                    pygame.display.flip()
-                #endregion
+                        pygame.display.flip()
+                    #endregion
 
-                # Check les collisions
-                ## collision bas entité (haut mur)
-                if (apx - self.secure_dist_player_collide < dex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < dey < bpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < bpy + self.secure_dist_player_collide):
-                    zone_collide.append("bottom")
-                ## collision haut entité (bas mur)
-                if (dpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (dpx - self.secure_dist_player_collide < bex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < bey < cpy + self.secure_dist_player_collide):
-                    zone_collide.append("top")
-                ## collision droit entité (gauche mur)
-                if (apx - self.secure_dist_player_collide < bex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < bey < dpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < dpy + self.secure_dist_player_collide):
-                    zone_collide.append("right")
-                ## collision gauche entité (droite mur)
-                if (bpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (bpx - self.secure_dist_player_collide < dex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < dey < cpy + self.secure_dist_player_collide):
-                    zone_collide.append("left")
+                    # Check les collisions
+                    ## collision bas entité (haut mur)
+                    if (apx - self.secure_dist_player_collide < dex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < dey < bpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < bpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < bpy + self.secure_dist_player_collide):
+                        zone_collide.append("bottom")
+                    ## collision haut entité (bas mur)
+                    if (dpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (dpx - self.secure_dist_player_collide < bex < cpx + self.secure_dist_player_collide and dpy - self.secure_dist_player_collide < bey < cpy + self.secure_dist_player_collide):
+                        zone_collide.append("top")
+                    ## collision droit entité (gauche mur)
+                    if (apx - self.secure_dist_player_collide < bex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < bey < dpy + self.secure_dist_player_collide) or (apx - self.secure_dist_player_collide < cex < dpx + self.secure_dist_player_collide and apy - self.secure_dist_player_collide < cey < dpy + self.secure_dist_player_collide):
+                        zone_collide.append("right")
+                    ## collision gauche entité (droite mur)
+                    if (bpx - self.secure_dist_player_collide < aex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < aey < cpy + self.secure_dist_player_collide) or (bpx - self.secure_dist_player_collide < dex < cpx + self.secure_dist_player_collide and bpy - self.secure_dist_player_collide < dey < cpy + self.secure_dist_player_collide):
+                        zone_collide.append("left")
 
         return zone_collide
     #endregion

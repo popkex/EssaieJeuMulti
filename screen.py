@@ -2,9 +2,40 @@ import pygame
 
 class Screen:
 
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
+
+        world_width, world_height = 5000, 9000
+
+        self.camera = Camera(1080, 720, world_width, world_height)  # Assurez-vous que world_width et world_height sont appropriés
+
         self.window = pygame.display.set_mode((1080, 720))
         pygame.display.set_caption("test jeu multi")
+
+
+    def refresh_screen(self, player_pos, all_players_pos):
+        """Redessine l'écran avec la caméra qui suit le joueur."""
+        self.window.fill(False)
+
+        # Crée un rectangle pour le joueur local
+        player_rect = pygame.Rect(player_pos[0], player_pos[1], 50, 50)
+
+        # Mettez à jour la caméra avec la position du joueur local
+        self.camera.update(player_rect)
+
+        # Dessinez les murs
+        self.draw_walls(self.game.game_physic.data_base.walls_collide)
+
+        # Dessinez les joueurs (tous les joueurs, y compris le local)
+        self.draw_players(self.game.game_physic.data_base, all_players_pos)
+
+        # Déplace le joueur local
+        self.game.player.move()
+
+        if not self.game.game_physic.debug_mode: 
+            pygame.display.flip()
+        else:
+            self.debug_mode(self.game.clock)
 
 
     def show_text(self, text, font=100):
@@ -14,27 +45,29 @@ class Screen:
 
         self.window.blit(txt_surface, (0, 0))
 
-
-    def draw_players(self, physics_database, players_pos, local_player_pos):
-        """Dessine les joueurs"""
-        entity_size = (50, 50)
+    def draw_players(self, physics_database, players_pos):
+        """Dessine les joueurs en tenant compte du décalage de la caméra."""
+        entity_size = (50, 50)  # Dimensions de chaque joueur
 
         physics_database.players_collide.clear()
 
-        if players_pos:
-            for player_id, position in players_pos:
-                # dessine le joueur
-                self.draw_rect(color=(255, 255, 255), pos=position, size=entity_size)
-                pygame.draw.rect(self.window, (255, 255, 255), (position[0], position[1], entity_size[0], entity_size[1]))
+        for player_id, position in players_pos:
+            # Déplace les entités en fonction de la caméra
+            player_rect = pygame.Rect(position[0], position[1], entity_size[0], entity_size[1])
+            player_rect = self.camera.apply(player_rect)  # Applique la transformation de la caméra à la position du joueur
 
-                # ajoute les collisions
-                if players_pos != local_player_pos:
-                    (x, y), (w, h) = position, entity_size
-                    physics_database.players_collide.append((x, y, w, h))
+            self.draw_rect(color=(255, 255, 255), pos=player_rect.topleft, size=entity_size)
+
+            # Ajoute les collisions
+            (x, y), (w, h) = player_rect.topleft, entity_size
+            physics_database.players_collide.append((x, y, w, h))
 
     def draw_walls(self, walls_data):
         for wall in walls_data:
-            pygame.draw.rect(self.window, wall[4], pygame.Rect(wall[0], wall[1], wall[2], wall[3]))
+            # Applique la transformation de la caméra aux murs
+            wall_rect = pygame.Rect(wall[0], wall[1], wall[2], wall[3])
+            wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra
+            pygame.draw.rect(self.window, wall[4], wall_rect)
 
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
         pygame.draw.line(self.window, color, start_line, stop_line, width=5)
@@ -48,7 +81,7 @@ class Screen:
         txt_surface = font.render(txt, render, color)
 
         if center:
-            position = txt_surface.get_rect(center=(self.screen.get_width()/2, position[1])) # position 1 signifie le y
+            position = txt_surface.get_rect(center=(self.get_width()/2, position[1])) # position 1 signifie le y
 
         if can_blit:
             self.window.blit(txt_surface, position)
@@ -64,3 +97,34 @@ class Screen:
         txt_surface = self.draw_txt(text, police=10)
         txt_surface = (txt_surface[0].get_rect())
         pygame.display.update(txt_surface)
+
+
+
+class Camera:
+    def __init__(self, width, height, world_width, world_height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.world_size = pygame.Rect(0, 0, world_width, world_height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        """Déplace les entités en appliquant la position de la caméra."""
+        return entity.move(self.camera.topleft)
+
+    def apply_rect(self, rect):
+        """Applique le déplacement de la caméra à un rectangle donné."""
+        return rect.move(self.camera.topleft)
+
+    def update(self, target):
+        """Met à jour la position de la caméra pour suivre le joueur."""
+        # La caméra doit être centrée sur le joueur (target).
+        x = -target.centerx + self.width // 2
+        y = -target.centery + self.height // 2
+
+        # Limites de la caméra : empêcher qu'elle dépasse les bords du monde
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.world_size.width - self.width), x)
+        y = max(-(self.world_size.height - self.height), y)
+
+        self.camera = pygame.Rect(x, y, self.width, self.height)
