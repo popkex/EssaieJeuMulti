@@ -212,19 +212,3 @@ class GamePhysic:
 
         return zone_collide
     #endregion
-
-    #region Gravity
-    def gravity(self, velocity_force, reset_force=False):
-        x, y = velocity_force
-
-        if reset_force:
-            self.gravity_force = 0
-        else:
-            # Augmenter la force de gravité progressivement
-            self.gravity_force = min(self.gravity_force + 0.025, 0.5)  # Limite à 2 pour éviter une chute trop rapide
-
-        y += self.gravity_force
-
-        return (x, y)
-
-    #endregion
