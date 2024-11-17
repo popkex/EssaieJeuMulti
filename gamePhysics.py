@@ -49,6 +49,28 @@ class GamePhysic:
             (300, 450, 75, 50, (0, 255, 0)),
         ]
 
+
+    def _draw_collision_boxes(self, entity_position, entity_size, wall_is_detected, wx, wy, ww, wh):
+        """Dessine les boîtes de collision pour l'entité et le mur en mode debug."""
+        ex, ey = entity_position
+        ew, eh = entity_size
+
+        # Dessiner la boîte de l'entité
+        self.screen.draw_line((ex, ey), (ex + ew, ey), color=(255, 255, 0))
+        self.screen.draw_line((ex + ew, ey), (ex + ew, ey + eh), color=(255, 255, 0))
+        self.screen.draw_line((ex + ew, ey + eh), (ex, ey + eh), color=(255, 255, 0))
+        self.screen.draw_line((ex, ey + eh), (ex, ey), color=(255, 255, 0))
+
+        # Dessiner la boîte du mur si une collision est détectée
+        if wall_is_detected:
+            self.screen.draw_line((wx, wy), (wx + ww, wy), color=(0, 255, 255))
+            self.screen.draw_line((wx + ww, wy), (wx + ww, wy + wh), color=(0, 255, 255))
+            self.screen.draw_line((wx + ww, wy + wh), (wx, wy + wh), color=(0, 255, 255))
+            self.screen.draw_line((wx, wy + wh), (wx, wy), color=(0, 255, 255))
+
+        pygame.display.flip()
+
+
     #region Collide
     def collide(self, entity_position, entity_size, is_player=False) -> str:
         if is_player:
@@ -57,68 +79,76 @@ class GamePhysic:
             return self.wall_collide(entity_position, entity_size)
 
     def wall_collide(self, entity_position, entity_size):
-        """Gérer les collisions entre une entité et un mur de manière optimisée, avec debug."""
-        zone_collide = []
-        collided_wall = None
+        """summary
+            point a = top_left of the wall
+            point b = top_right of the wall
+            point c = bottom_right of the wall
+            point d = bottom_left of the wall
 
-        ex, ey = entity_position
-        ew, eh = entity_size
+            aex, aey, bex, bey, cex, cey, dex, dey => position du coin (a, b, c, d) suivie de e (entity) suivie de x ou y  
+            awx, awy, bwx, bwy, cwx, cwy, dwx, dwy => position du coin (a, b, c, d) suivie de w (wall) suivie de x ou y  
+        """
 
-        for wall in self.data_base.walls_collide:
-            wx, wy = wall[0:2]
-            ww, wh = wall[2:4]
+        zone_collide = []  # Zones où la collision a eu lieu
 
-            entity_left = ex
-            entity_right = ex + ew
-            entity_top = ey
-            entity_bottom = ey + eh
+        ex, ey = entity_position  # Position de l'entité
+        ew, eh = entity_size  # Taille de l'entité
 
-            wall_left = wx
-            wall_right = wx + ww
-            wall_top = wy
-            wall_bottom = wy + wh
+        # Boucle sur chaque mur pour vérifier les collisions
+        for wall_collide in self.data_base.walls_collide:
+            # Récupération des coordonnées et de la taille du mur
+            wx, wy, ww, wh, color = wall_collide  # x, y, largeur, hauteur du mur
 
-            if entity_right < wall_left or entity_left > wall_right or entity_bottom < wall_top or entity_top > wall_bottom:
+            # Calcul des coins de l'entité
+            aex, aey = ex, ey
+            bex, bey = ex + ew, ey
+            cex, cey = ex + ew, ey + eh
+            dex, dey = ex, ey + eh
+
+            # Calcul des coins du mur
+            awx, awy = wx, wy
+            bwx, bwy = wx + ww, wy
+            cwx, cwy = wx + ww, wy + wh
+            dwx, dwy = wx, wy + wh
+
+            # Vérifier si les boîtes de l'entité et du mur se croisent
+            if ex + ew < wx or ex > wx + ww or ey + eh < wy or ey > wy + wh:
                 wall_is_detected = False
             else:
                 wall_is_detected = True
 
-            #region Debug
+            # Mode debug : Dessiner les boîtes des entités et des murs
             if self.debug_mode:
-                # Dessiner la boîte englobante de l'entité
-                self.screen.draw_line((entity_left, entity_top), (entity_right, entity_top), color=(255, 255, 0))
-                self.screen.draw_line((entity_right, entity_top), (entity_right, entity_bottom), color=(255, 255, 0))
-                self.screen.draw_line((entity_right, entity_bottom), (entity_left, entity_bottom), color=(255, 255, 0))
-                self.screen.draw_line((entity_left, entity_bottom), (entity_left, entity_top), color=(255, 255, 0))
+                self._draw_collision_boxes(entity_position, entity_size, wall_is_detected, wx, wy, ww, wh)
 
-                # Dessiner la boîte englobante du mur
-                if wall_is_detected:
-                    self.screen.draw_line((wall_left, wall_top), (wall_right, wall_top), color=(0, 255, 255))
-                    self.screen.draw_line((wall_right, wall_top), (wall_right, wall_bottom), color=(0, 255, 255))
-                    self.screen.draw_line((wall_right, wall_bottom), (wall_left, wall_bottom), color=(0, 255, 255))
-                    self.screen.draw_line((wall_left, wall_bottom), (wall_left, wall_top), color=(0, 255, 255))
-
-                pygame.display.flip()
-            #endregion
-
-            # Déterminer les côtés de collision
+            # Si une collision est détectée, vérifier les côtés spécifiques
             if wall_is_detected:
-                if entity_bottom >= wall_top and entity_top < wall_top:
+                # Collision bas de l'entité avec le haut du mur
+                if (awx - self.secure_dist_wall_collide < dex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < dey < bwy + self.secure_dist_wall_collide) or \
+                (awx - self.secure_dist_wall_collide < cex < bwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < bwy + self.secure_dist_wall_collide):
+
                     zone_collide.append("bottom")
-                    collided_wall = wall
-                if entity_top <= wall_bottom and entity_bottom > wall_bottom:
+
+                # Collision haut de l'entité avec le bas du mur
+                if (dwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or \
+                (dwx - self.secure_dist_wall_collide < bex < cwx + self.secure_dist_wall_collide and dwy - self.secure_dist_wall_collide < bey < cwy + self.secure_dist_wall_collide):
+
                     zone_collide.append("top")
-                    collided_wall = wall
-                if entity_right >= wall_left and entity_left < wall_left:
+
+                # Collision droite de l'entité avec le côté gauche du mur
+                if (awx - self.secure_dist_wall_collide < bex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < bey < dwy + self.secure_dist_wall_collide) or \
+                (awx - self.secure_dist_wall_collide < cex < dwx + self.secure_dist_wall_collide and awy - self.secure_dist_wall_collide < cey < dwy + self.secure_dist_wall_collide):
                     zone_collide.append("right")
-                    collided_wall = wall
-                if entity_left <= wall_right and entity_right > wall_right:
+
+                # Collision gauche de l'entité avec le côté droit du mur
+                if (bwx - self.secure_dist_wall_collide < aex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < aey < cwy + self.secure_dist_wall_collide) or \
+                (bwx - self.secure_dist_wall_collide < dex < cwx + self.secure_dist_wall_collide and bwy - self.secure_dist_wall_collide < dey < cwy + self.secure_dist_wall_collide):
                     zone_collide.append("left")
-                    collided_wall = wall
 
-        print(f"zoneCollide: {zone_collide}; collided_wall: {collided_wall}")
+        # Retourner les zones de collision et le mur
+        print(f"zoneCollide: {zone_collide}")
 
-        return zone_collide, collided_wall
+        return zone_collide
 
     def entity_collide(self, entity_position, entity_size):
         """gerer les collision entre une entité et un mur"""
