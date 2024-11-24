@@ -2,15 +2,16 @@
 
 """
 TODO:
-    - ajouter les collisions entre les joueurs
-    - ajouter de la gravité : 
-        - a reflechir mais surement une force qui va s'appliquer constament dans une direction 
-"""
-
-"""
-TODO ERREUR:
-    - l'activation/desactivation de la dedection des collisions avec les murs n'est pas bien:
-        - vérifier a partir de la moitier de la hauteur/largeur ?
+    - faire le nouveau systeme de position (par case de x par x)
+    - faire le systeme qui permet a la foreuse de miner (juste a update pour toute les foreuses)
+    - faire une liste de toute les foreuse
+    - modifier la facon dont les foreuses sont afficher (dans le screen l35)
+    - faire en sorte qu'on puisse ajouter ou supprimer les foreuses
+    - envoyer au server si une foreuse est envoyer ou supprimer
+    - faire en sorte qu'on puisse mettre des foreuses a certains endroit
+    - faire une sortie pour les convoyeurs 
+    - faire les convoyeurs
+    - ... ect quoi
 """
 
 import pygame

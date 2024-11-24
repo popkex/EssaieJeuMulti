@@ -74,7 +74,12 @@ class Screen:
 
     def draw_building(self, building_data):
         img = building_data.img
+        size = building_data.size
         position = building_data.position
+
+        building_rect = pygame.Rect(position[0], position[1], size[0], size[1])
+
+        position = self.camera.apply_rect(building_rect)  # Applique le décalage de la caméra
 
         self.window.blit(img, position)
 
