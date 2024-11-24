@@ -26,13 +26,16 @@ class Screen:
         # Dessinez les murs
         self.draw_walls(self.game.game_physic.data_base.walls_collide)
 
+        # Dessinez les batiments
+        self.draw_building()
+
+
         # Dessinez les joueurs (tous les joueurs, y compris le local)
         self.draw_players(self.game.game_physic.data_base, all_players_pos)
 
         # Déplace le joueur local
         self.game.player.move()
 
-        self.draw_building(d)
 
         if not self.game.game_physic.debug_mode: 
             pygame.display.flip()
@@ -72,16 +75,19 @@ class Screen:
             pygame.draw.rect(self.window, wall[4], wall_rect)
 
 
-    def draw_building(self, building_data):
-        img = building_data.img
-        size = building_data.size
-        position = building_data.position
+    def draw_building(self):
+        for building in self.game.building.buildings.data.all_building:
+            building_data = building.data
 
-        building_rect = pygame.Rect(position[0], position[1], size[0], size[1])
+            img = building_data.img
+            size = building_data.size
+            position = building_data.position
 
-        position = self.camera.apply_rect(building_rect)  # Applique le décalage de la caméra
+            building_rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
-        self.window.blit(img, position)
+            position = self.camera.apply_rect(building_rect)  # Applique le décalage de la caméra
+
+            self.window.blit(img, position)
 
 
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):

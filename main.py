@@ -29,13 +29,13 @@ class Game:
         self.player = Entity(self, position=(100, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
+        self.building = building
+
+        self.building.buildings = building.Building(self)
 
         self.is_running = True
         self.key_pressed = []
         self.clock = pygame.time.Clock()
-
-        self.drill = building.Drill((300, 200))
-        self.game_physic.add_building_collide(self.drill.data)
 
     def refresh_screen(self):
         """redessine tout l'écran avec la caméra"""
@@ -46,6 +46,7 @@ class Game:
     def run(self):
         """La bouche de jeu"""
         self.internet_manager.start(self)
+        self.drill = building.Drill((300, 200))
 
         while self.is_running:
             self.refresh_screen()
@@ -72,4 +73,4 @@ class Game:
         pygame.quit()
 
 game = Game()
-game.run()
+game.run() 
