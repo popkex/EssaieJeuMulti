@@ -32,7 +32,6 @@ class Building:
         type = building.data.type
 
         if type == "drill":
-            input(building)
             self.data.all_drill.append(building)
 
         self.data.all_building.append(building)
