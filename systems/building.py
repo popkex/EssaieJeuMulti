@@ -19,7 +19,8 @@ class DrillsData:
     size: Tuple[int, int]
     orientation: int  # Compris entre 0 et 3 || 0: nord; 1: est; 2: sud; 3:ouest
     price: int
-    max_ressource_stock = int
+    ressource: int
+    max_ressource_stock: int
 
 
 class Building:
@@ -37,6 +38,11 @@ class Building:
         self.data.all_building.append(building)
 
 
+    def update_all_building(self):
+        for build in self.data.all_building:
+            build.update()
+
+
 class Drill(Building):
 
     def __init__(self, position, lvl=1, orientation=0):
@@ -48,6 +54,7 @@ class Drill(Building):
         size = img.get_size()
         ori = orientation
         price = 0
+        ressource = 0
         max_ressource_stock = 100
 
         self.data = DrillsData(
@@ -59,6 +66,8 @@ class Drill(Building):
             size=size,
             orientation=ori,
             price=price,
+            ressource=ressource,
+            max_ressource_stock=max_ressource_stock,
         )
 
         self.init()
@@ -72,8 +81,11 @@ class Drill(Building):
 
 
     def extract_resource(self):
-        self.ressource += 1
-        print(self.ressource)
+        self.data.ressource += 1
+
+
+    def update(self):
+        self.extract_resource()
 
 
 #--------------------------------------------------------------------------------------------------

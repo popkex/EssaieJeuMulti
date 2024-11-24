@@ -3,9 +3,7 @@
 """
 TODO:
     - faire le nouveau systeme de position (par case de x par x)
-    - faire le systeme qui permet a la foreuse de miner (juste a update pour toute les foreuses)
-    - faire une liste de toute les foreuse
-    - modifier la facon dont les foreuses sont afficher (dans le screen l35)
+    - a peu pres fait || faire le systeme qui permet a la foreuse de miner (juste a update pour toute les foreuses)
     - faire en sorte qu'on puisse ajouter ou supprimer les foreuses
     - envoyer au server si une foreuse est envoyer ou supprimer
     - faire en sorte qu'on puisse mettre des foreuses a certains endroit
@@ -15,7 +13,7 @@ TODO:
 """
 
 import pygame
-from systems import building 
+from systems import building as _build
 from src.screen import Screen
 from src.entity import Entity
 from src.internetManager import InternetManager
@@ -29,9 +27,10 @@ class Game:
         self.player = Entity(self, position=(100, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
-        self.building = building
 
-        self.building.buildings = building.Building(self)
+        self.building = _build
+        self.building.buildings = _build.Building(self)
+        self.building = self.building.buildings
 
         self.is_running = True
         self.key_pressed = []
@@ -46,11 +45,13 @@ class Game:
     def run(self):
         """La bouche de jeu"""
         self.internet_manager.start(self)
-        self.drill = building.Drill((300, 200))
+        self.drill = _build.Drill((300, 200))
 
         while self.is_running:
             self.refresh_screen()
             pygame.display.flip()
+
+            self.building.update_all_building()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

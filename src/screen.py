@@ -76,7 +76,7 @@ class Screen:
 
 
     def draw_building(self):
-        for building in self.game.building.buildings.data.all_building:
+        for building in self.game.building.data.all_building:
             building_data = building.data
 
             img = building_data.img

@@ -81,13 +81,10 @@ class GamePhysic:
     def collide(self, entity_position, entity_size, is_building=False, is_player=False, entity_id=None) -> str:
         """Vérifie les collisions sans appliquer le décalage de la caméra"""
         if is_building:
-            print(1)
             return self.building_collide(entity_position, entity_size)
         elif is_player:
-            print(2)
             return self.entity_collide(entity_position, entity_size, entity_id)
         else:
-            print(3)
             return self.wall_collide(entity_position, entity_size)
 
     def wall_collide(self, entity_position, entity_size):
