@@ -45,7 +45,6 @@ class Server:
             try:
                 data, address = self.socket.recvfrom(1024)  # Réception des données
                 data = data.decode('utf-8')
-                print(f"Message reçu de {address}: {data}")
 
                 client_thread = ThreadForClient(self, address, data)
                 client_thread.start()
