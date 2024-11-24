@@ -1,4 +1,4 @@
-from client import Client
+from src.client import Client
 
 class InternetManager:
 

@@ -14,10 +14,11 @@ TODO ERREUR:
 """
 
 import pygame
-from screen import Screen
-from entity import Entity
-from internetManager import InternetManager
-from gamePhysics import GamePhysic
+from systems import building 
+from src.screen import Screen
+from src.entity import Entity
+from src.internetManager import InternetManager
+from src.gamePhysics import GamePhysic
 
 pygame.init()
 
@@ -32,6 +33,8 @@ class Game:
         self.key_pressed = []
         self.clock = pygame.time.Clock()
 
+        self.drill = building.Drill([300, 200])
+
     def refresh_screen(self):
         """redessine tout l'écran avec la caméra"""
         player_pos, all_players_pos = self.internet_manager.get_players_position()
@@ -44,6 +47,9 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
+            self.screen.draw_building(self.drill.data)
+            pygame.display.flip()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_running = False

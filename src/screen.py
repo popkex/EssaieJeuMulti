@@ -69,6 +69,14 @@ class Screen:
             wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra
             pygame.draw.rect(self.window, wall[4], wall_rect)
 
+
+    def draw_building(self, building_data):
+        img = building_data.img
+        position = building_data.position
+
+        self.window.blit(img, position)
+
+
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
         pygame.draw.line(self.window, color, start_line, stop_line, width=5)
 

@@ -4,7 +4,7 @@ import threading
 import requests
 import ast
 import re
-import protocolClientServer as _pcs
+import src.protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import Dict, Tuple
 
