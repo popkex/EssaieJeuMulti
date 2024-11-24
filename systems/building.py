@@ -1,29 +1,38 @@
 import pygame
 from dataclasses import dataclass
+from typing import Tuple
 
 @dataclass
 class Data:
     name: str
-    position: list[int, int]
+    img: pygame.image
+    position: Tuple[int, int]
     lvl: int
-    size: list[int, int]
+    size: Tuple[int, int]
     orientation: int  # Compris entre 0 et 3 || 0: nord; 1: est; 2: sud; 3:ouest
     price: int
-    img: pygame.image
 
 
 class Drill():
 
     def __init__(self, position, lvl=1, orientation=0):
         name = "drill"
-        position = position
-        lvl = lvl
-        size = [100, 100]
-        orientation = orientation
-        price = 0
         img = pygame.image.load(r"C:\\Users\\cleme\\Downloads\\i.jpg")
+        pos = position
+        lvl = lvl
+        size = img.get_size()
+        ori = orientation
+        price = 0
 
-        self.data = Data(name, position, lvl, size, orientation, price, img)
+        self.data = Data(
+            name=name, 
+            img=img,
+            position=pos,
+            lvl=lvl,
+            size=size,
+            orientation=ori,
+            price=price,
+        )
 
         self.ressource = 0
 

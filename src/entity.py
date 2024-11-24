@@ -71,9 +71,8 @@ class Entity:
         zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))
         first_corify_pos = self.rectify_position((x, y), zone_collide)
 
-        # Détection des collisions avec d'autres joueurs
-        zone_collide = self.game.game_physic.collide(first_corify_pos, (self.scale, self.scale), is_player=True, entity_id=self.game.internet_manager.get_my_id())
-        second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
+        zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale), is_building=True)
+        second_corify_pos = self.rectify_position((x, y), zone_collide)
 
         # Mise à jour de la position du joueur
         self.position = second_corify_pos

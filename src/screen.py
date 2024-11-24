@@ -13,7 +13,7 @@ class Screen:
         pygame.display.set_caption("test jeu multi")
 
 
-    def refresh_screen(self, player_pos, all_players_pos):
+    def refresh_screen(self, player_pos, all_players_pos, d):
         """Redessine l'écran avec la caméra qui suit le joueur."""
         self.window.fill(False)
 
@@ -31,6 +31,8 @@ class Screen:
 
         # Déplace le joueur local
         self.game.player.move()
+
+        self.draw_building(d)
 
         if not self.game.game_physic.debug_mode: 
             pygame.display.flip()

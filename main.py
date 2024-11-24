@@ -33,12 +33,13 @@ class Game:
         self.key_pressed = []
         self.clock = pygame.time.Clock()
 
-        self.drill = building.Drill([300, 200])
+        self.drill = building.Drill((300, 200))
+        self.game_physic.add_building_collide(self.drill.data)
 
     def refresh_screen(self):
         """redessine tout l'écran avec la caméra"""
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.refresh_screen(player_pos, all_players_pos)
+        self.screen.refresh_screen(player_pos, all_players_pos, self.drill.data)
         self.player.move()
 
     def run(self):
@@ -47,7 +48,6 @@ class Game:
 
         while self.is_running:
             self.refresh_screen()
-            self.screen.draw_building(self.drill.data)
             pygame.display.flip()
 
             for event in pygame.event.get():
