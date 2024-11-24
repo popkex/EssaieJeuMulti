@@ -24,7 +24,7 @@ pygame.init()
 class Game:
     def __init__(self):
         self.screen = Screen(self)
-        self.player = Entity(self, position=(1000, 0), scale=50)
+        self.player = Entity(self, position=(100, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
 
