@@ -36,7 +36,6 @@ class Screen:
         # Déplace le joueur local
         self.game.player.move()
 
-
         if not self.game.game_physic.debug_mode: 
             pygame.display.flip()
         else:
