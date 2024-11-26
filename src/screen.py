@@ -26,13 +26,13 @@ class Screen:
                 return i
 
     def convert_case_to_rect(self, case):
-        """une case fait du 16par16"""
+        """une case fait du 8par8"""
         result = None
 
         if len(case) == 2:
-            result = case[0] * 160, case[1] * 160
+            result = case[0] * 16, case[1] * 16
         elif len(case) == 4:
-            result = case[0] * 160, case[1] * 160, case[2] * 160, case[3] * 160
+            result = case[0] * 16, case[1] * 16, case[2] * 16, case[3] * 16
         else:
             print("\033[31m" + f"il y a {len(case)} élements fournis dans {case}, cette longueur devrait etre de 2 ou 4" + "\033[0m")
 
@@ -52,7 +52,7 @@ class Screen:
         return result
 
 
-    def refresh_screen(self, player_pos, all_players_pos, d):
+    def refresh_screen(self, player_pos, all_players_pos):
         """Redessine l'écran avec la caméra qui suit le joueur."""
         self.window.fill(False)
 
@@ -63,7 +63,7 @@ class Screen:
         self.camera.update(player_rect)
 
         # Dessinez les murs
-        self.draw_walls(self.game.game_physic.data_base.walls_collide)
+        self.draw_walls()
 
         # Dessinez les batiments
         self.draw_building()
@@ -105,13 +105,15 @@ class Screen:
             (x, y), (w, h) = player_rect.topleft, entity_size
             physics_database.players_collide.append((x, y, w, h))
 
-    def draw_walls(self, walls_data):
+    def draw_walls(self):
+        walls_data = self.game.game_physic.data_base.walls_collide
+
         for wall in walls_data:
             # Recuperer les coordonées reels du mur
-            wall_rect = self.convert_case_to_rect(wall[0:4])
-
+            x, y, w, h = self.convert_case_to_rect(wall[0:4])
+            
             # Applique la transformation de la caméra aux murs
-            wall_rect = pygame.Rect(wall[0], wall[1], wall[2], wall[3])
+            wall_rect = pygame.Rect(x, y, w, y)
             wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra
             pygame.draw.rect(self.window, wall[4], wall_rect)
 

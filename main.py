@@ -41,7 +41,7 @@ class Game:
     def refresh_screen(self):
         """redessine tout l'écran avec la caméra"""
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.refresh_screen(player_pos, all_players_pos, self.drill.data)
+        self.screen.refresh_screen(player_pos, all_players_pos)
         self.player.move()
 
     def run(self):
