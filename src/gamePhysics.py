@@ -41,13 +41,13 @@ class GamePhysic:
 
     def init_walls(self):
         self.data_base.walls_collide = [
-            (0, 700, 2000, 100, (0, 255, 0)),  # (x, y, w, h, (color)) /// le sol
+            (0, 43, 77, 6, (0, 255, 0)),  # (x, y, w, h, (color)) /// le sol
 
             # les murs pour éviter de sortir du niveau
-            (0, 600, 350, 50, (175, 175, 175)),
-            (0, 550, 250, 50, (175, 255, 0)),
-            (0, 500, 200, 50, (0, 255, 0)),
-            (300, 400, 75, 50, (0, 255, 0)),
+            (0, 18, 21, 3, (175, 175, 175)),
+            (0, 34, 15, 3, (175, 255, 0)),
+            (0, 31, 12, 3, (0, 255, 0)),
+            (18, 25, 4, 3, (0, 255, 0)),
         ]
 
 
@@ -105,8 +105,11 @@ class GamePhysic:
 
         # Boucle sur chaque mur pour vérifier les collisions
         for wall_collide in self.data_base.walls_collide:
+            # recuperer les coordonées pour une vérifications optimal
+            wall_collide = self.game.screen.convert_case_to_rect((wall_collide[0:3]))
+            
             # Récupération des coordonnées et de la taille du mur
-            wx, wy, ww, wh, color = wall_collide  # x, y, largeur, hauteur du mur
+            wx, wy, ww, wh = wall_collide  # x, y, largeur, hauteur du mur
 
             # Calcul des coins de l'entité
             aex, aey = ex, ey

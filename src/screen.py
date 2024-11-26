@@ -93,6 +93,9 @@ class Screen:
 
     def draw_walls(self, walls_data):
         for wall in walls_data:
+            # Recuperer les coordonées reels du mur
+            wall_rect = self.convert_case_to_rect(wall[0:3]
+)
             # Applique la transformation de la caméra aux murs
             wall_rect = pygame.Rect(wall[0], wall[1], wall[2], wall[3])
             wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra
@@ -102,6 +105,9 @@ class Screen:
     def draw_building(self):
         for building in self.game.building.data.all_building:
             building_data = building.data
+
+            # Recuperer les coordonées reels du building
+            position = self.convert_case_to_rect(building_data.position)
 
             img = building_data.img
             size = building_data.size

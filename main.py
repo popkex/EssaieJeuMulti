@@ -47,7 +47,7 @@ class Game:
     def run(self):
         """La bouche de jeu"""
         self.internet_manager.start(self)
-        self.drill = _build.Drill((300, 200))
+        self.drill = _build.Drill((16, 16))
 
         while self.is_running:
             self.refresh_screen()
