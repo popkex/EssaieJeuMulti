@@ -106,7 +106,7 @@ class GamePhysic:
         # Boucle sur chaque mur pour vérifier les collisions
         for wall_collide in self.data_base.walls_collide:
             # recuperer les coordonées pour une vérifications optimal
-            wall_collide = self.game.screen.convert_case_to_rect((wall_collide[0:3]))
+            wall_collide = self.game.screen.convert_case_to_rect((wall_collide[0:4]))
             
             # Récupération des coordonnées et de la taille du mur
             wx, wy, ww, wh = wall_collide  # x, y, largeur, hauteur du mur
@@ -177,6 +177,9 @@ class GamePhysic:
 
         # Boucle sur chaque mur pour vérifier les collisions
         for building in self.data_base.building_collide:
+            # recuperer les coordonées pour une vérifications optimal
+            building = self.game.screen.convert_case_to_rect((building[0:4]))
+
             # Récupération des coordonnées et de la taille du mur
             wx, wy, ww, wh = building  # x, y, largeur, hauteur du mur
 

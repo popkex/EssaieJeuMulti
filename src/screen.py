@@ -27,15 +27,29 @@ class Screen:
 
     def convert_case_to_rect(self, case):
         """une case fait du 16par16"""
-        x, y = case[0] * 16, case[1] * 16
+        result = None
 
-        return (x, y)
+        if len(case) == 2:
+            result = case[0] * 160, case[1] * 160
+        elif len(case) == 4:
+            result = case[0] * 160, case[1] * 160, case[2] * 160, case[3] * 160
+        else:
+            print("\033[31m" + f"il y a {len(case)} élements fournis dans {case}, cette longueur devrait etre de 2 ou 4" + "\033[0m")
+
+        return result
 
     def convert_rect_to_case(self, rect):
         """une case fait du 16 par 16"""
-        x, y = int(rect[0] / 16), int(rect[1] / 16)
+        result = None
 
-        return (x, y)
+        if len(rect) == 2:
+            result = int(rect[0] / 16), int(rect[1] / 16)
+        elif len(rect) == 4:
+            result = int(rect[0] / 16), int(rect[1] / 16), int(rect[2] / 16), int(rect[3] / 16)
+        else:
+            print("\033[31m" + f"il y a {len(rect)} élements fournis dans {rect}, cette longueur devrait etre de 2 ou 4" + "\033[0m")
+
+        return result
 
 
     def refresh_screen(self, player_pos, all_players_pos, d):
@@ -94,8 +108,8 @@ class Screen:
     def draw_walls(self, walls_data):
         for wall in walls_data:
             # Recuperer les coordonées reels du mur
-            wall_rect = self.convert_case_to_rect(wall[0:3]
-)
+            wall_rect = self.convert_case_to_rect(wall[0:4])
+
             # Applique la transformation de la caméra aux murs
             wall_rect = pygame.Rect(wall[0], wall[1], wall[2], wall[3])
             wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra

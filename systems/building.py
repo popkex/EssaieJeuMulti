@@ -57,7 +57,7 @@ class Drill(Building):
         id = None
         name = "the drill bg"
         type = "drill"
-        img = pygame.image.load(r"C:\\Users\\cleme\\Downloads\\i.jpg")
+        img = pygame.image.load(r"1-LeJeu\Assets\i.png")
         pos = position
         lvl = lvl
         size = img.get_size()
