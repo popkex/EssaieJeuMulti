@@ -15,8 +15,8 @@ class Screen:
         pygame.display.set_caption("test jeu multi")
 
 
-    def add_building(self, building_class, id):
-        self.case[id] = building_class
+    def add_building(self, building_class, id, case):
+        self.case[id] = (case, building_class) 
 
     def get_index_case_with_name(self, building_id):
         for i, build in enumerate(self.case):
@@ -33,7 +33,7 @@ class Screen:
 
     def convert_rect_to_case(self, rect):
         """une case fait du 16 par 16"""
-        x, y = rect[0] / 16, rect[1] / 16
+        x, y = int(rect[0] / 16), int(rect[1] / 16)
 
         return (x, y)
 
