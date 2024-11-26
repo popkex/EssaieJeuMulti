@@ -11,6 +11,7 @@ class BuildingData:
 
 @dataclass
 class DrillsData:
+    id: int
     name: str
     type: str
     img: pygame.image
@@ -29,6 +30,8 @@ class Building:
 
         self.data = BuildingData()
 
+        self.current_id = 0
+
     def add_building(self, building):
         type = building.data.type
 
@@ -43,9 +46,15 @@ class Building:
             build.update()
 
 
+    def get_id(self):
+        self.current_id += 1
+        return self.current_id
+
+
 class Drill(Building):
 
     def __init__(self, position, lvl=1, orientation=0):
+        id = None
         name = "the drill bg"
         type = "drill"
         img = pygame.image.load(r"C:\\Users\\cleme\\Downloads\\i.jpg")
@@ -58,6 +67,7 @@ class Drill(Building):
         max_ressource_stock = 100
 
         self.data = DrillsData(
+            id=id,
             name=name, 
             type=type,
             img=img,
@@ -74,6 +84,7 @@ class Drill(Building):
 
     def init(self):
         if buildings:
+            self.data.id = buildings.get_id()
             buildings.add_building(self)  # enregistre la foreuse
             buildings.game.game_physic.add_building_collide(self.data)  # ajoute les collisions de la foreuse
         else:

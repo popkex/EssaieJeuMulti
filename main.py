@@ -2,6 +2,8 @@
 
 """
 TODO:
+    ajout d'un id pour les drill
+
     - faire le nouveau systeme de position (par case de x par x)
     - a peu pres fait || faire le systeme qui permet a la foreuse de miner (juste a update pour toute les foreuses)
     - faire en sorte qu'on puisse ajouter ou supprimer les foreuses

@@ -5,12 +5,37 @@ class Screen:
     def __init__(self, game):
         self.game = game
 
+        self.case = {}
+
         world_width, world_height = 5000, 9000
 
         self.camera = Camera(1080, 720, world_width, world_height)  # Assurez-vous que world_width et world_height sont appropriés
 
         self.window = pygame.display.set_mode((1080, 720))
         pygame.display.set_caption("test jeu multi")
+
+
+    def add_building(self, building_class, id):
+        self.case[id] = building_class
+
+    def get_index_case_with_name(self, building_id):
+        for i, build in enumerate(self.case):
+            build_id = build.data.id
+
+            if building_id == build_id:
+                return i
+
+    def convert_case_to_rect(self, case):
+        """une case fait du 16par16"""
+        x, y = case[0] * 16, case[1] * 16
+
+        return (x, y)
+
+    def convert_rect_to_case(self, rect):
+        """une case fait du 16 par 16"""
+        x, y = rect[0] / 16, rect[1] / 16
+
+        return (x, y)
 
 
     def refresh_screen(self, player_pos, all_players_pos, d):
