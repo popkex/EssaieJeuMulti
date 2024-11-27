@@ -1,8 +1,8 @@
 # coding:utf-8
 
 import socket
+import pygame
 import threading
-import time
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
@@ -50,6 +50,8 @@ class Server:
                 client_thread.start()
             except Exception as e:
                 print(f"Erreur lors de la réception des données : {e}")
+
+            clock.tick(250)
 
     def send_data_to_clients(self, data):
         """Envoie les données à tous les clients."""
@@ -122,5 +124,7 @@ class GameDataSender(threading.Thread):
 
 #----------------------------------------------------------------
 if __name__ == "__main__":
+    clock = pygame.time.Clock()
+
     server = Server()
     server.listen()
