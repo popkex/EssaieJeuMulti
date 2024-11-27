@@ -1,5 +1,6 @@
 # coding:utf-8
 import socket
+import pygame
 import threading
 import requests
 import ast
@@ -25,6 +26,8 @@ class Client(threading.Thread):
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Utiliser UDP
         self.socket.settimeout(0.5)
+
+        self.clock = pygame.time.Clock()
 
         # Pas de connexion explicite pour UDP
         print("Client prêt à envoyer et recevoir des messages UDP.")
@@ -138,3 +141,5 @@ class Client(threading.Thread):
                 self.send_update()
             except Exception as e:
                 print(f"Echec de l'envoi des données : {e}")
+
+        self.clock.tick(120)
