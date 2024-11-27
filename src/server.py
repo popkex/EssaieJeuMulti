@@ -42,7 +42,7 @@ class Server:
     def listen(self):
         """Écoute et traite les messages des clients."""
         # Définir le tick rate
-        TICK_RATE = 30  # 30 Hz, mise à jour toutes les 33 ms
+        TICK_RATE = 20 
         self.TICK_INTERVAL = 1 / TICK_RATE  # Intervalle entre les mises à jour
 
         # Boucle principale du serveur
@@ -69,9 +69,6 @@ class Server:
         delta_time = current_time - last_time
 
         if delta_time >= self.TICK_INTERVAL:
-            # Logic du serveur : traitement de la mise à jour
-            print(f"Serveur mis à jour à {current_time:.3f}")
-
             # Mettre à jour last_time
             last_time = current_time
 
