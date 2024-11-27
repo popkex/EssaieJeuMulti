@@ -58,10 +58,10 @@ class Server:
             except Exception as e:
                 print(f"Erreur lors de la réception des données : {e}")
 
-            self.limit_refresh()
+            self.limit_refresh(last_time)
 
 
-    def limit_refresh(self):
+    def limit_refresh(self, last_time):
         # Temps actuel
         current_time = time.time()
 
