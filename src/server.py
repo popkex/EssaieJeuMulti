@@ -1,7 +1,7 @@
 # coding:utf-8
 
 import socket
-import pygame
+import time
 import threading
 import protocolClientServer as _pcs
 from dataclasses import dataclass, field
@@ -41,6 +41,13 @@ class Server:
 
     def listen(self):
         """Écoute et traite les messages des clients."""
+        # Définir le tick rate
+        TICK_RATE = 30  # 30 Hz, mise à jour toutes les 33 ms
+        self.TICK_INTERVAL = 1 / TICK_RATE  # Intervalle entre les mises à jour
+
+        # Boucle principale du serveur
+        last_time = time.time()
+
         while True:
             try:
                 data, address = self.socket.recvfrom(1024)  # Réception des données
@@ -51,7 +58,26 @@ class Server:
             except Exception as e:
                 print(f"Erreur lors de la réception des données : {e}")
 
-            clock.tick(250)
+            self.limit_refresh()
+
+
+    def limit_refresh(self):
+        # Temps actuel
+        current_time = time.time()
+
+        # Calculer le temps écoulé depuis la dernière mise à jour
+        delta_time = current_time - last_time
+
+        if delta_time >= self.TICK_INTERVAL:
+            # Logic du serveur : traitement de la mise à jour
+            print(f"Serveur mis à jour à {current_time:.3f}")
+
+            # Mettre à jour last_time
+            last_time = current_time
+
+        # Optimisation : attente pour ne pas trop solliciter le processeur
+        time.sleep(0.001)  # Petite pause pour limiter la charge CPU
+
 
     def send_data_to_clients(self, data):
         """Envoie les données à tous les clients."""
@@ -124,7 +150,5 @@ class GameDataSender(threading.Thread):
 
 #----------------------------------------------------------------
 if __name__ == "__main__":
-    clock = pygame.time.Clock()
-
     server = Server()
     server.listen()
