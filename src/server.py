@@ -37,12 +37,11 @@ class Server:
         print(f"Le serveur est démarré sur {hostname}:{port}")
 
         self.game_data_sender = GameDataSender(self)
-        self.game_data_sender.start()
 
     def listen(self):
         """Écoute et traite les messages des clients."""
         # Définir le tick rate
-        TICK_RATE = 20 
+        TICK_RATE = 120
         self.TICK_INTERVAL = 1 / TICK_RATE  # Intervalle entre les mises à jour
 
         # Boucle principale du serveur
@@ -53,7 +52,7 @@ class Server:
                 data, address = self.socket.recvfrom(1024)  # Réception des données
                 data = data.decode('utf-8')
 
-                client_thread = ThreadForClient(self, address, data)
+                client_thread = ThreadForClient(self, self.game_data_sender, address, data)
                 client_thread.start()
             except Exception as e:
                 print(f"Erreur lors de la réception des données : {e}")
@@ -86,17 +85,29 @@ class Server:
             except Exception as e:
                 print(f"Erreur lors de l'envoi des données à {client_address}: {e}")
 
+    def send_data_to_client(self, address, data):
+        """Envoie les données a un seul client"""
+        data = data.encode("utf-8")
+
+        try:
+            self.socket.sendto(data, address)
+        except Exception as e:
+            print(f"Erreur lors de l'envoi des données à {address}: {e}")
+
 class ThreadForClient(threading.Thread):
 
-    def __init__(self, server, address, data):
+    def __init__(self, server, data_sender, address, data):
         super().__init__()
         self.server = server
         self.address = address
         self.data = data
 
+        self.data_sender = data_sender
+
     def run(self):
         """Gère la communication avec le client."""
         self.execute_order(self.data)
+        self.data_sender.send(address=self.address)
 
     def execute_order(self, data):
         """Exécute les différentes commandes en fonction des données reçues."""
@@ -136,14 +147,13 @@ class GameDataSender(threading.Thread):
         super().__init__()
         self.server = server
 
-    def run(self):
-        self.regroup_data()
+    def send(self, address):
+        self.regroup_data(address)
 
-    def regroup_data(self):
+    def regroup_data(self, address):
         """Envoie les données importantes aux clients."""
-        while True:
-            code_and_players_pos = f"PPos, {data_base.player_pos}"
-            self.server.send_data_to_clients(code_and_players_pos)
+        code_and_players_pos = f"PPos, {data_base.player_pos}"
+        self.server.send_data_to_client(address, code_and_players_pos)
 
 #----------------------------------------------------------------
 if __name__ == "__main__":
