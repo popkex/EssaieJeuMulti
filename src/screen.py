@@ -113,12 +113,11 @@ class Screen:
         for wall in walls_data:
             # Recuperer les coordonées reels du mur
             x, y, w, h = self.convert_case_to_rect(wall[0:4])
-            
+
             # Applique la transformation de la caméra aux murs
-            wall_rect = pygame.Rect(x, y, w, y)
+            wall_rect = pygame.Rect(x, y, w, h)
             wall_rect = self.camera.apply_rect(wall_rect)  # Applique le décalage de la caméra
             pygame.draw.rect(self.window, wall[4], wall_rect)
-
 
     def draw_building(self):
         for building in self.game.building.data.all_building:
@@ -136,7 +135,6 @@ class Screen:
             position = self.camera.apply_rect(building_rect)  # Applique le décalage de la caméra
 
             self.window.blit(img, position)
-
 
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
         pygame.draw.line(self.window, color, start_line, stop_line, width=5)
