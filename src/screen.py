@@ -54,31 +54,33 @@ class Screen:
 
     def refresh_screen(self, player_pos, all_players_pos):
         """Redessine l'écran avec la caméra qui suit le joueur."""
-        self.window.fill(False)
+        try:
+            self.window.fill(False)
 
-        # Crée un rectangle pour le joueur local
-        player_rect = pygame.Rect(player_pos[0], player_pos[1], 50, 50)
+            # Crée un rectangle pour le joueur local
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], 50, 50)
 
-        # Mettez à jour la caméra avec la position du joueur local
-        self.camera.update(player_rect)
+            # Mettez à jour la caméra avec la position du joueur local
+            self.camera.update(player_rect)
 
-        # Dessinez les murs
-        self.draw_walls()
+            # Dessinez les murs
+            self.draw_walls()
 
-        # Dessinez les batiments
-        self.draw_building()
+            # Dessinez les batiments
+            self.draw_building()
 
 
-        # Dessinez les joueurs (tous les joueurs, y compris le local)
-        self.draw_players(self.game.game_physic.data_base, all_players_pos)
+            # Dessinez les joueurs (tous les joueurs, y compris le local)
+            self.draw_players(self.game.game_physic.data_base, all_players_pos)
 
-        # Déplace le joueur local
-        self.game.player.move()
+            # Déplace le joueur local
+            self.game.player.move()
 
-        if not self.game.game_physic.debug_mode: 
-            pygame.display.flip()
-        else:
-            self.debug_mode(self.game.clock)
+            if not self.game.game_physic.debug_mode: 
+                pygame.display.flip()
+            else:
+                self.debug_mode()
+        except: pass
 
 
     def show_text(self, text, font=100):
@@ -155,12 +157,12 @@ class Screen:
         return txt_surface, position
 
 
-    def debug_mode(self, clock):
+    def debug_mode(self):
         """
         /!\ ceci est une partie du mode debug, une partie se trouve dans le gamePhysic.py et affiche les collisions /!\ 
         affiche les informations du debug mode (comme les fps)
         """
-        text = f'{int(clock.get_fps())}fps'
+        text = f'{int(self.game.clock.get_fps())}fps'
         txt_surface = self.draw_txt(text, police=10)
         txt_surface = (txt_surface[0].get_rect())
         pygame.display.update(txt_surface)
