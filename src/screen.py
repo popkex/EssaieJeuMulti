@@ -69,7 +69,6 @@ class Screen:
             # Dessinez les batiments
             self.draw_building()
 
-
             # Dessinez les joueurs (tous les joueurs, y compris le local)
             self.draw_players(self.game.game_physic.data_base, all_players_pos)
 
@@ -123,16 +122,21 @@ class Screen:
         for building in self.game.building.data.all_building:
             building_data = building.data
 
-            # Recuperer les coordonées reels du building
-            position = self.convert_case_to_rect(building_data.position)
-
             img = building_data.img
             size = building_data.size
             position = building_data.position
 
-            building_rect = pygame.Rect(position[0], position[1], size[0], size[1])
+            x, y = position
+            h, w = size
+
+            # Recuperer les coordonées reels du building
+            x, y, h, w = self.convert_case_to_rect((x, y, h, w))
+
+            building_rect = pygame.Rect(x, y, h, w)
 
             position = self.camera.apply_rect(building_rect)  # Applique le décalage de la caméra
+
+            img = pygame.transform.scale(img, (h, w))
 
             self.window.blit(img, position)
 

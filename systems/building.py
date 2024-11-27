@@ -66,6 +66,9 @@ class Drill(Building):
         ressource = 0
         max_ressource_stock = 100
 
+        # Convertir la taille de l'img (qui est en px) en case
+        size = size[0] / 16, size[1] / 16
+
         self.data = DrillsData(
             id=id,
             name=name, 
