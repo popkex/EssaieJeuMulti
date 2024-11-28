@@ -2,7 +2,6 @@
 
 """
 TODO:
-
     - a peu pres fait || faire le systeme qui permet a la foreuse de miner (juste a update pour toute les foreuses)
     - faire en sorte qu'on puisse ajouter ou supprimer les foreuses
     - envoyer au server si une foreuse est envoyer ou supprimer
