@@ -7,6 +7,9 @@ from typing import Tuple
 class BuildingData:
     all_building: list = field(default_factory=list)
     all_drill: list = field(default_factory=list)
+    all_convoyeurs: list = field(default_factory=list)
+
+    ressource_pos = {}  # pos: ressource_type
 
 
 @dataclass
@@ -23,6 +26,7 @@ class DrillsData:
     ressource: int
     max_ressource_stock: int
     ressource_exit: Tuple[int, int]
+    ressource_type: str
 
 
 class Building:
@@ -54,22 +58,24 @@ class Building:
 
 class Drill(Building):
 
-    def __init__(self, position, lvl=1, orientation=0):
+    def __init__(self, position, _lvl=1, orientation=0):
         id = None
         name = "the drill bg"
         type = "drill"
         img = pygame.image.load(r"Assets\i.png")
         pos = position
-        lvl = lvl
+        lvl = _lvl
         size = img.get_size()
         ori = orientation
         price = 0
         ressource = 0
         max_ressource_stock = 100
-        ressource_exit = None
 
         # Convertir la taille de l'img (qui est en px) en case
-        size = size[0] / 16, size[1] / 16
+        size = int(size[0] / 16), int(size[1] / 16)
+
+        ressource_exit = self.defi_ressource_exit(ori, pos, size)
+        ressource_type = "copper"
 
         self.data = DrillsData(
             id=id,
@@ -83,7 +89,8 @@ class Drill(Building):
             price=price,
             ressource=ressource,
             max_ressource_stock=max_ressource_stock,
-            ressource_exit=self.defi_ressource_exit(ori, pos, size)
+            ressource_exit=ressource_exit,
+            ressource_type=ressource_type,
         )
 
         self.init()
@@ -99,28 +106,71 @@ class Drill(Building):
     def defi_ressource_exit(self, ori, pos, size):
         # si l'orientation est celle par defaut : sortie vers le sud
         if ori == 0:
-            x = int(pos[0] + size[0] / 2)
-            y = pos[1] + size[1]
+            x = pos[0] + size[0] / 2
+            y = pos[1] + size[1] + 1
         elif ori == 1:
-            x = pos[0]
-            y = int(pos[1] + size[1] / 2)
+            x = pos[0] - 1
+            y = pos[1] + size[1] / 2
         elif ori == 2:
-            x = int(pos[0] + size[0] / 2)
-            y = pos[1]
+            x = pos[0] + size[0] / 2
+            y = pos[1] - 1
         else:
-            x = pos[0] + size[0]
-            y = int(pos[1] + size[1] / 2)
+            x = pos[0] + size[0] + 1
+            y = pos[1] + size[1] / 2
 
-        # input(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
+        x, y = int(x), int(y)
+
+        # print(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
         return (x, y)
 
 
     def extract_resource(self):
         self.data.ressource += 1
 
+        buildings.data.ressource_pos[self.data.ressource_exit] = self.data.ressource_type
 
     def update(self):
         self.extract_resource()
+
+
+
+#--------------------------------------------------------------------------------------------------
+@dataclass
+class ConvoyeursData:
+    id: int
+    name: str
+    type: str
+    img: pygame.image
+    position: Tuple[int, int]
+    lvl: int
+    size: Tuple[int, int]
+    orientation: int  # Compris entre 0 et 3 || 0: sud; 1: ouest; 2: nord; 3: est
+    price: int
+    max_ressource_stock: int
+    ressource_exit: Tuple[int, int]
+    ressource_enter: Tuple[int, int]
+
+
+class Convoyeur:
+
+    def __init__(self, position, _lvl=1, orientation=0):
+        id = None
+        name = "the convoyeur bg"
+        type = "convoyeur"
+        img = pygame.image.load(r"Assets\i.png")
+        pos = position
+        lvl = _lvl
+        size = img.get_size()
+        ori = orientation
+        price = 0
+        ressource = 0
+        max_ressource_stock = 100
+
+        # Convertir la taille de l'img (qui est en px) en case
+        size = int(size[0] / 16), int(size[1] / 16)
+
+        ressource_exit = self.defi_ressource_exit(ori, pos, size)
+        ressource_enter = None
 
 
 #--------------------------------------------------------------------------------------------------
