@@ -1,7 +1,7 @@
 import pygame
 from dataclasses import dataclass, field
 from typing import Tuple
-from resources import DataResources
+from systems.resources import DataResources
 
 
 @dataclass
@@ -57,7 +57,7 @@ class Building:
         return self.current_id
 
 
-    def def_ressource_enter(self, ori, pos, size):
+    def defi_ressource_enter(self, ori, pos, size):
         # si l'orientation est celle par defaut : entrer vers le nord
         if ori == 0:  # N
             x = pos[0] + size[0] / 2
@@ -77,7 +77,7 @@ class Building:
         # print(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
         return (x, y)
 
-    def def_ressource_exit(self, ori, pos, size):
+    def defi_ressource_exit(self, ori, pos, size):
         # si l'orientation est celle par defaut : sortie vers le sud
         if ori == 0:
             x = pos[0] + size[0] / 2
@@ -168,7 +168,7 @@ class ConvoyeursData:
     size: Tuple[int, int]
     orientation: int  # Compris entre 0 et 3 || 0: sud; 1: ouest; 2: nord; 3: est
     price: int
-    ressource: DataResources = field(default_factory=DataResources)
+    ressource: DataResources
     max_ressource_stock: int
     ressource_exit: Tuple[int, int]
     ressource_enter: Tuple[int, int]
@@ -191,8 +191,8 @@ class Convoyeur(Building):
         # Convertir la taille de l'img (qui est en px) en case
         size = int(size[0] / 16), int(size[1] / 16)
 
-        ressource_exit = self.def_ressource_exit(ori, pos, size)
-        ressource_enter = self.def_ressource_enter(ori, pos, size)
+        ressource_exit = self.defi_ressource_exit(ori, pos, size)
+        ressource_enter = self.defi_ressource_enter(ori, pos, size)
 
         self.data = ConvoyeursData(
             id=id,
