@@ -6,6 +6,8 @@ from systems.resources import DataResources
 
 @dataclass
 class BuildingData:
+    previous_building = None
+
     all_building: list = field(default_factory=list)
     all_drill: list = field(default_factory=list)
     all_convoyeurs: list = field(default_factory=list)
@@ -37,6 +39,30 @@ class Building:
         self.data = BuildingData()
 
         self.current_id = 0
+
+
+    def reset_place(self):
+        self.data.previous_building = None
+
+    def start_place(self, img: pygame.Surface):
+        """permet de selectionner l'endroit ou on place le building"""
+        img.set_alpha(128)  # met l'image transparente (0 transparent > 255 opaque)
+
+        # recuperer et formater en case la position de la souris puis retransformer la case en coordonées (permet de mettre la position de la souris sur une case)
+        x, y = pygame.mouse.get_pos()
+        x, y = self.game.screen.convert_rect_to_case((x, y))
+        x, y = self.game.screen.convert_case_to_rect((x, y))
+
+        rect = img.get_rect()
+        rect.center = (x, y)
+
+        # print(f"rectc: {img.get_rect()}; mouser: {(x, y)}")
+
+        self.data.previous_building = (img.copy(), rect)
+
+        img.set_alpha(255)  # reset la transparence
+
+
 
     def add_building(self, building):
         type = building.data.type
@@ -153,7 +179,6 @@ class Drill(Building):
 
     def update(self):
         self.extract_resource()
-
 
 
 #--------------------------------------------------------------------------------------------------

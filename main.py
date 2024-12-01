@@ -33,6 +33,7 @@ class Game:
 
         self.is_running = True
         self.key_pressed = []
+        self.place_building = False
         self.clock = pygame.time.Clock()
 
     def refresh_screen(self):
@@ -41,12 +42,19 @@ class Game:
         self.screen.refresh_screen(player_pos, all_players_pos)
         self.player.move()
 
+    def update_game(self):
+        if self.place_building:
+            self.building.start_place(self.drill.data.img) 
+        else:
+            self.building.reset_place()
+
     def run(self):
         """La bouche de jeu"""
         self.internet_manager.start(self)
         self.drill = _build.Drill((16, 16))
 
         while self.is_running:
+            self.update_game()
             self.refresh_screen()
             pygame.display.flip()
 
@@ -58,6 +66,9 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     self.key_pressed.append(event.key)
+
+                    if event.key == pygame.K_1:
+                        self.place_building = not self.place_building
 
                     if event.key == pygame.K_F6:
                         self.game_physic.debug_mode = not self.game_physic.debug_mode

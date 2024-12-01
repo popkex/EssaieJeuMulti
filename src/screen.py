@@ -119,6 +119,7 @@ class Screen:
             pygame.draw.rect(self.window, wall[4], wall_rect)
 
     def draw_building(self):
+        """Afficher tout les buildings"""
         for building in self.game.building.data.all_building:
             building_data = building.data
 
@@ -139,6 +140,15 @@ class Screen:
             img = pygame.transform.scale(img, (h, w))
 
             self.window.blit(img, position)
+
+        """Afficher le buildings en cours de positionnement"""
+        img = self.game.building.data.previous_building
+
+        if img:
+            img, rect = img
+
+            self.window.blit(img, rect)
+
 
     def draw_line(self, start_line, stop_line, color=(0, 0, 255)):
         pygame.draw.line(self.window, color, start_line, stop_line, width=5)
