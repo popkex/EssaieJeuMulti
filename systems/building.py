@@ -57,6 +57,26 @@ class Building:
         return self.current_id
 
 
+    def def_ressource_enter(self, ori, pos, size):
+        # si l'orientation est celle par defaut : entrer vers le nord
+        if ori == 0:  # N
+            x = pos[0] + size[0] / 2
+            y = pos[1]
+        elif ori == 1:  # E
+            x = pos[0] + size[0]
+            y = pos[1] + size[1] / 2
+        elif ori == 2:  # S
+            x = pos[0] + size[0] / 2
+            y = pos[1] + size[1]
+        else:  # O
+            x = pos[0]
+            y = pos[1] + size[1] / 2
+
+        x, y = int(x), int(y)
+
+        # print(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
+        return (x, y)
+
     def def_ressource_exit(self, ori, pos, size):
         # si l'orientation est celle par defaut : sortie vers le sud
         if ori == 0:
@@ -77,25 +97,6 @@ class Building:
         # print(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
         return (x, y)
 
-    def def_ressource_enter(self, ori, pos, size):
-        # si l'orientation est celle par defaut : entrer vers le nord
-        if ori == 0:  # N
-            x = pos[0] + size[0] / 2
-            y = pos[1] - 1
-        elif ori == 1:  # E
-            x = pos[0] + size[0] + 1
-            y = pos[1] + size[1] / 2
-        elif ori == 2:  # S
-            x = pos[0] + size[0] / 2
-            y = pos[1] + size[1] + 1
-        else:  # O
-            x = pos[0] - 1
-            y = pos[1] + size[1] / 2
-
-        x, y = int(x), int(y)
-
-        # print(f"ori: {ori}, pos: {pos}, size: {size}, xy: {x, y}")
-        return (x, y)
 
 
 class Drill(Building):
