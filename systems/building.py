@@ -127,7 +127,7 @@ class Building:
 
 class Drill(Building):
 
-    def __init__(self, position, _lvl=1, orientation=0):
+    def __init__(self, position=(0, 0), _lvl=1, orientation=0, is_init=True):
         id = None
         name = "the drill bg"
         type = "drill"
@@ -162,7 +162,7 @@ class Drill(Building):
             ressource_type=ressource_type,
         )
 
-        self.init()
+        if is_init : self.init()
 
     def init(self):
         if buildings:

@@ -38,7 +38,7 @@ class Game:
 
     def update_game(self):
         if self.place_building:
-            self.building.start_place(self.drill.data.img) 
+            self.building.start_place(self.place_building.data.img) 
         else:
             self.building.reset_place()
 
@@ -62,7 +62,9 @@ class Game:
                     self.key_pressed.append(event.key)
 
                     if event.key == pygame.K_1:
-                        self.place_building = not self.place_building
+                        if self.place_building: self.place_building = None
+                        else: self.place_building = _build.Drill(is_init=False)
+
 
                     if event.key == pygame.K_F6:
                         self.game_physic.debug_mode = not self.game_physic.debug_mode
