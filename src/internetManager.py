@@ -10,6 +10,13 @@ class InternetManager:
         self.my_ip = self.client_thread.get_my_id()  # recupère et stock l'ip public du client
 
 
+    def switch_online_mode(self):
+        self.client_thread.offline_mode = not self.client_thread.offline_mode
+
+    def get_online_mode(self):
+        return self.client_thread.offline_mode
+
+
     def stop(self):
         """Arrete la synchronisation client server"""
         if self.client_thread.is_alive():

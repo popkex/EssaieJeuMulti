@@ -22,6 +22,7 @@ class Client(threading.Thread):
         super().__init__()
         self.game = game
         self.is_connected = True
+        self.offline_mode = False
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Utiliser UDP
@@ -130,16 +131,17 @@ class Client(threading.Thread):
         self.connect()
 
         while self.is_connected:
-            try:
-                self.get_order()
-            except Exception as e:
-                print(f"Erreur dans get_order(): {e}")
-                self.socket.close()
-                break
+            if not self.offline_mode:
+                try:
+                    self.get_order()
+                except Exception as e:
+                    print(f"Erreur dans get_order(): {e}")
+                    self.socket.close()
+                    break
 
-            try:
-                self.send_update()
-            except Exception as e:
-                print(f"Echec de l'envoi des données : {e}")
+                try:
+                    self.send_update()
+                except Exception as e:
+                    print(f"Echec de l'envoi des données : {e}")
 
         self.clock.tick(120)

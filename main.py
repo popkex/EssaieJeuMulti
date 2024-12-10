@@ -71,6 +71,9 @@ class Game:
                         if self.game_physic.debug_mode: print("Debug Mode Activé !") 
                         else: print("Debug Mode désactiver !")
 
+                    if event.key == pygame.K_F7:
+                        self.internet_manager.switch_online_mode()
+
                 if event.type == pygame.KEYUP:
                     self.key_pressed.remove(event.key)
 

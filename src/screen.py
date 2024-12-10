@@ -52,7 +52,7 @@ class Screen:
         return result
 
 
-    def refresh_screen(self, player_pos, all_players_pos):
+    def refresh_screen(self, player_pos, all_players_pos, is_online=True):
         """Redessine l'écran avec la caméra qui suit le joueur."""
         self.window.fill(False)
 
@@ -69,11 +69,11 @@ class Screen:
         # Dessinez les batiments
         self.draw_building()
 
-        # Dessinez les joueurs (tous les joueurs, y compris le local)
-        self.draw_players(self.game.game_physic.data_base, all_players_pos)
-
-        # Déplace le joueur local
-        self.game.player.move()
+        if is_online:
+            # Dessinez les joueurs (tous les joueurs, y compris le local)
+            self.draw_players(self.game.game_physic.data_base, all_players_pos)
+        else:
+            self.draw_players()  # mettre la pos du joueur
 
         if self.game.game_physic.debug_mode: 
             self.debug_mode()
