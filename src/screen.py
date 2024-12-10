@@ -73,7 +73,7 @@ class Screen:
             # Dessinez les joueurs (tous les joueurs, y compris le local)
             self.draw_players(self.game.game_physic.data_base, all_players_pos)
         else:
-            self.draw_players()  # mettre la pos du joueur
+            self.draw_players(self.game.player.position)  # mettre la pos du joueur
 
         if self.game.game_physic.debug_mode: 
             self.debug_mode()
@@ -91,6 +91,7 @@ class Screen:
         entity_size = (50, 50)  # Dimensions de chaque joueur
 
         physics_database.players_collide.clear()
+
 
         for player_id, position in players_pos:
             # Déplace les entités en fonction de la caméra
