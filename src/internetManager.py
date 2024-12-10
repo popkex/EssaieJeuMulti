@@ -11,17 +11,16 @@ class InternetManager:
 
 
     def switch_online_mode(self):
-        self.client_thread.offline_mode = not self.client_thread.offline_mode
+        self.client_thread.online_mode = not self.client_thread.online_mode
 
     def get_online_mode(self):
-        return self.client_thread.offline_mode
+        return self.client_thread.online_mode
 
 
     def stop(self):
         """Arrete la synchronisation client server"""
         if self.client_thread.is_alive():
             self.client_thread.disconnect()
-            self.client_thread.is_connected = False
 
     def get_players_position(self) -> tuple[float, float]:
         """Renvoie la position du joueur local et des autres joueurs"""

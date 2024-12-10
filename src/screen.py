@@ -71,9 +71,9 @@ class Screen:
 
         if is_online:
             # Dessinez les joueurs (tous les joueurs, y compris le local)
-            self.draw_players(self.game.game_physic.data_base, all_players_pos)
+            self.draw_players(players_pos=all_players_pos)
         else:
-            self.draw_players(self.game.player.position)  # mettre la pos du joueur
+            self.draw_players(player_pos=self.game.player.position)  # mettre la pos du joueur
 
         if self.game.game_physic.debug_mode: 
             self.debug_mode()
@@ -86,23 +86,37 @@ class Screen:
 
         self.window.blit(txt_surface, (0, 0))
 
-    def draw_players(self, physics_database, players_pos):
-        """Dessine les joueurs en tenant compte du décalage de la caméra."""
+
+    def draw_players(self, players_pos=None, player_pos=None):
         entity_size = (50, 50)  # Dimensions de chaque joueur
 
+        physics_database = self.game.game_physic.data_base
         physics_database.players_collide.clear()
 
+        if not players_pos and player_pos:
+            """si on est en solo"""
+            self.apply_player(position=player_pos, entity_size=entity_size)
+        elif players_pos and not player_pos:
+            """si on est en multi"""
+            for player_id, position in players_pos:
+                self.apply_player(position, entity_size)
+        else:
+            print("Merci de donner une position d'un ou plusieurs joueurs dans le draw_player (screen.py)")
+            pass
 
-        for player_id, position in players_pos:
-            # Déplace les entités en fonction de la caméra
-            player_rect = pygame.Rect(position[0], position[1], entity_size[0], entity_size[1])
-            player_rect = self.camera.apply(player_rect)  # Applique la transformation de la caméra à la position du joueur
+    def apply_player(self, position, entity_size):
+        physics_database = self.game.game_physic.data_base
 
-            self.draw_rect(color=(255, 255, 255), pos=player_rect.topleft, size=entity_size)
+        # Déplace les entités en fonction de la caméra
+        player_rect = pygame.Rect(position[0], position[1], entity_size[0], entity_size[1])
+        player_rect = self.camera.apply(player_rect)  # Applique la transformation de la caméra à la position du joueur
 
-            # Ajoute les collisions
-            (x, y), (w, h) = player_rect.topleft, entity_size
-            physics_database.players_collide.append((x, y, w, h))
+        self.draw_rect(color=(255, 255, 255), pos=player_rect.topleft, size=entity_size)
+
+        # Ajoute les collisions
+        (x, y), (w, h) = player_rect.topleft, entity_size
+        physics_database.players_collide.append((x, y, w, h))
+
 
     def draw_walls(self):
         walls_data = self.game.game_physic.data_base.walls_collide

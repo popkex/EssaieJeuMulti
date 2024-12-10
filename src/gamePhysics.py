@@ -25,7 +25,7 @@ class GamePhysic:
 
     def __init__(self, screen, game):
         self.game=game
-        self.debug_mode = False
+        self.debug_mode = True
         self.data_base = DataBase()
         self.screen = screen
 

@@ -21,12 +21,13 @@ class Client(threading.Thread):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.is_connected = True
-        self.offline_mode = False
+        self.is_connected = False
+        self.online_mode = False
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Utiliser UDP
         self.socket.settimeout(0.5)
+        self.is_connected = True
 
         self.clock = pygame.time.Clock()
 
@@ -96,6 +97,7 @@ class Client(threading.Thread):
     def disconnect(self):
         self.send_order("PlayerDisconnect")
         self.socket.close()
+        self.is_connected = False
 
     def connect(self):
         self.send_order("PlayerConnect")
@@ -131,7 +133,7 @@ class Client(threading.Thread):
         self.connect()
 
         while self.is_connected:
-            if not self.offline_mode:
+            if self.online_mode:
                 try:
                     self.get_order()
                 except Exception as e:
@@ -143,5 +145,11 @@ class Client(threading.Thread):
                     self.send_update()
                 except Exception as e:
                     print(f"Echec de l'envoi des données : {e}")
+
+        if not self.is_connected:
+            print("Vous Vous estes deconnecter du server")
+        else:
+            print("Deconnection echouer, deconnection en cours")
+            self.disconnect()
 
         self.clock.tick(120)

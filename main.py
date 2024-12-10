@@ -30,10 +30,10 @@ class Game:
         self.place_building = False
         self.clock = pygame.time.Clock()
 
-    def refresh_screen(self):
+    def refresh_screen(self, is_online=True):
         """redessine tout l'écran avec la caméra"""
         player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.refresh_screen(player_pos, all_players_pos)
+        self.screen.refresh_screen(player_pos, all_players_pos, is_online=is_online)
         self.player.move()
 
     def update_game(self):
@@ -49,7 +49,7 @@ class Game:
 
         while self.is_running:
             self.update_game()
-            self.refresh_screen()
+            self.refresh_screen(is_online=self.internet_manager.get_online_mode())
             pygame.display.flip()
 
             self.building.update_all_building()
