@@ -1,4 +1,5 @@
 import pygame
+from typing import Tuple
 
 class Screen:
 
@@ -104,7 +105,8 @@ class Screen:
             print("Merci de donner une position d'un ou plusieurs joueurs dans le draw_player (screen.py)")
             pass
 
-    def apply_player(self, position, entity_size):
+    def apply_player(self, position: Tuple[int, int], entity_size):
+        """Permet de modifier la position des entitées en fonction du positionnement de la cam"""
         physics_database = self.game.game_physic.data_base
 
         # Déplace les entités en fonction de la caméra

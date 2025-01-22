@@ -2,6 +2,9 @@ import pygame
 import math
 from dataclasses import dataclass
 
+# déclaration des classes utilisers
+from src.screen import Screen
+
 
 
 
@@ -23,7 +26,7 @@ class DataBase:
 
 class GamePhysic:
 
-    def __init__(self, screen, game):
+    def __init__(self, screen: Screen, game):
         self.game=game
         self.debug_mode = True
         self.data_base = DataBase()
@@ -51,10 +54,23 @@ class GamePhysic:
         ]
 
 
-    def _draw_collision_boxes(self, entity_position, entity_size, wall_is_detected, wx, wy, ww, wh):
+    def draw_collision_boxes(self, entity_position, entity_size, wall_is_detected, wall_r):
         """Dessine les boîtes de collision pour l'entité et le mur en mode debug."""
-        ex, ey = entity_position
-        ew, eh = entity_size
+        # rectifier les positions
+        ## du joueur
+        entity_rect = pygame.Rect(*entity_position, *entity_size)
+        rectified_entity_rect = self.screen.camera.apply_rect(entity_rect)
+        ## du mur
+        wall_rect = pygame.Rect(*wall_r)
+        rectified_wall_rect = self.screen.camera.apply_rect(wall_rect)
+
+        #reasigner les var
+        ## du joueur
+        ex, ey = rectified_entity_rect.topleft
+        ew, eh = rectified_entity_rect.size
+        ## du mur
+        wx, wy = rectified_wall_rect.topleft
+        ww, wh = rectified_wall_rect.size
 
         # Dessiner la boîte de l'entité
         self.screen.draw_line((ex, ey), (ex + ew, ey), color=(255, 255, 0))
@@ -131,7 +147,7 @@ class GamePhysic:
 
             # Mode debug : Dessiner les boîtes des entités et des murs
             if self.debug_mode:
-                self._draw_collision_boxes(entity_position, entity_size, wall_is_detected, wx, wy, ww, wh)
+                self.draw_collision_boxes(entity_position, entity_size, wall_is_detected, (wx, wy, ww, wh))
 
             # Si une collision est détectée, vérifier les côtés spécifiques
             if wall_is_detected:
@@ -203,7 +219,7 @@ class GamePhysic:
 
             # Mode debug : Dessiner les boîtes des entités et des murs
             if self.debug_mode:
-                self._draw_collision_boxes(entity_position, entity_size, wall_is_detected, wx, wy, ww, wh)
+                self.draw_collision_boxes(entity_position, entity_size, wall_is_detected, (wx, wy, ww, wh))
 
             # Si une collision est détectée, vérifier les côtés spécifiques
             if wall_is_detected:
