@@ -10,8 +10,8 @@ class InternetManager:
         self.my_ip = self.client_thread.get_my_id()  # recupère et stock l'ip public du client
 
 
-    def switch_online_mode(self):
-        self.client_thread.online_mode = not self.client_thread.online_mode
+    def switch_online_mode(self, mode=None):
+        self.client_thread.online_mode = mode if mode != None else not self.client_thread.online_mode
 
     def get_online_mode(self):
         return self.client_thread.online_mode

@@ -53,7 +53,7 @@ class Screen:
         return result
 
 
-    def refresh_screen(self, player_pos, all_players_pos, is_online=True):
+    def refresh_screen(self, player_pos=Tuple, all_players_pos=[], is_online=True):
         """Redessine l'écran avec la caméra qui suit le joueur."""
         self.window.fill(False)
 

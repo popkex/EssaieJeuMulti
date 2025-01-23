@@ -247,7 +247,7 @@ class GamePhysic:
 
         return zone_collide
 
-    def entity_collide(self, entity_position, entity_size, entity_id=None):
+    def entity_collide(self, entity_position, entity_size, entity_id=None, is_online=True):
         """gerer les collision entre une entité et un mur"""
         zone_collide = []  # "left", "right", "top", "bottom"
 

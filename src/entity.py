@@ -48,8 +48,6 @@ class Entity:
         pygame.draw.rect(self.screen.window, (255, 255, 255), player_rect_display)  # Affichage
 
     def move(self, position=None):
-        if position:
-            print(position)
         """Déplace le joueur sans appliquer la caméra (calculs de déplacement réels)"""
         keys = pygame.key.get_pressed()
 
@@ -68,10 +66,10 @@ class Entity:
             x += self.velocity
 
         # Détection des collisions avec les murs (sans décalage caméra)
-        zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))
+        zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))  # calculer la collisions avec les murs
         first_corify_pos = self.rectify_position((x, y), zone_collide)
 
-        zone_collide = self.game.game_physic.collide(first_corify_pos, (self.scale, self.scale), is_building=True)
+        zone_collide = self.game.game_physic.collide(first_corify_pos, (self.scale, self.scale), is_building=True)  # calculer la position avec les building
         second_corify_pos = self.rectify_position(first_corify_pos, zone_collide)
 
         # Mise à jour de la position du joueur

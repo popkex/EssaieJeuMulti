@@ -22,7 +22,7 @@ class Client(threading.Thread):
         super().__init__()
         self.game = game
         self.is_connected = False
-        self.online_mode = False
+        self.online_mode = True
 
         print("Lancement de la connexion au serveur...")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Utiliser UDP

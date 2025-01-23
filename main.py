@@ -2,6 +2,9 @@
 
 """
 TODO:
+    - le bug des fps dans le mode solo vient en partie du refresh screen
+
+TODO:
     - faire le placement des buildings quand click gauche est appuyer
 """
 
@@ -11,6 +14,7 @@ from src.screen import Screen
 from src.entity import Entity
 from src.internetManager import InternetManager
 from src.gamePhysics import GamePhysic
+import cProfile
 
 pygame.init()
 
@@ -30,10 +34,14 @@ class Game:
         self.place_building = False
         self.clock = pygame.time.Clock()
 
-    def refresh_screen(self, is_online=True):
+    def refresh_screen(self, is_online):
         """redessine tout l'écran avec la caméra"""
-        player_pos, all_players_pos = self.internet_manager.get_players_position()
-        self.screen.refresh_screen(player_pos, all_players_pos, is_online=is_online)
+        if is_online:
+            player_pos, all_players_pos = self.internet_manager.get_players_position()
+            self.screen.refresh_screen(player_pos, all_players_pos, is_online=is_online)
+        else:
+            self.screen.refresh_screen(self.player.position, is_online=is_online)
+
         self.player.move()
 
     def update_game(self):
@@ -65,14 +73,13 @@ class Game:
                         if self.place_building: self.place_building = None
                         else: self.place_building = _build.Drill(is_init=False)
 
-
                     if event.key == pygame.K_F6:
                         self.game_physic.debug_mode = not self.game_physic.debug_mode
                         if self.game_physic.debug_mode: print("Debug Mode Activé !") 
                         else: print("Debug Mode désactiver !")
 
-                    if event.key == pygame.K_F7:
-                        self.internet_manager.switch_online_mode()
+                    # if event.key == pygame.K_F7:
+                    #     self.internet_manager.switch_online_mode()
 
                 if event.type == pygame.KEYUP:
                     self.key_pressed.remove(event.key)
