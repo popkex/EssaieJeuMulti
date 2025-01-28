@@ -14,7 +14,6 @@ class BuildingData:
 
     ressource_pos = {}  # pos: ressource_type
 
-
 @dataclass
 class DrillsData:
     id: int
@@ -40,9 +39,19 @@ class Building:
 
         self.current_id = 0
 
+        self.declare_buildings_type()
+
+    def declare_buildings_type(self):
+        self.drill = Drill
+        self.convoyeur = Convoyeur
 
     def reset_place(self):
         self.data.previous_building = None
+
+    def convert_rect_to_case(self, pos):
+        return self.game.screen.convert_rect_to_case(pos)
+    def convert_case_to_rect(self, pos):
+        return self.game.screen.convert_case_to_rect(pos)
 
     def start_place(self, img: pygame.Surface):
         """permet de selectionner l'endroit ou on place le building"""
@@ -50,8 +59,8 @@ class Building:
 
         # recuperer et formater en case la position de la souris puis retransformer la case en coordonées (permet de mettre la position de la souris sur une case)
         x, y = pygame.mouse.get_pos()
-        x, y = self.game.screen.convert_rect_to_case((x, y))
-        x, y = self.game.screen.convert_case_to_rect((x, y))
+        x, y = self.convert_rect_to_case((x, y))
+        x, y = self.convert_case_to_rect((x, y))
 
         rect = img.get_rect()
         rect.center = (x, y)
@@ -62,9 +71,21 @@ class Building:
 
         img.set_alpha(255)  # reset la transparence
 
+    def get_place_pos(self, img: pygame.Surface):
+        # recuperer et formater en case la position de la souris puis retransformer la case en coordonées (permet de mettre la position de la souris sur une case)
+        x, y = pygame.mouse.get_pos()
+        x, y = self.convert_rect_to_case((x, y))
+        x, y = self.convert_case_to_rect((x, y))
+
+        rect = img.get_rect()
+        rect.center = (x, y)
+
+        return rect[0], rect[1]
+
 
 
     def add_building(self, building):
+        print()
         type = building.data.type
 
         if type == "drill":
@@ -127,7 +148,9 @@ class Building:
 
 class Drill(Building):
 
-    def __init__(self, position=(0, 0), _lvl=1, orientation=0, is_init=True):
+    def __init__(self, game, position=(0, 0), _lvl=1, orientation=0, is_init=True):
+        super().__init__(game)
+
         id = None
         name = "the drill bg"
         type = "drill"
@@ -164,9 +187,13 @@ class Drill(Building):
 
         if is_init : self.init()
 
-    def init(self):
+    def init(self, pos_rect=None, pos_case=None):
         if buildings:
             self.data.id = buildings.get_id()
+
+            if pos_rect: self.data.position = self.convert_rect_to_case(pos_rect)
+            elif pos_case: self.data.position = pos_case
+
             buildings.add_building(self)  # enregistre la foreuse
             buildings.game.game_physic.add_building_collide(self.data)  # ajoute les collisions de la foreuse
         else:

@@ -48,7 +48,7 @@ class Screen:
         elif len(rect) == 4:
             result = int(rect[0] / 16), int(rect[1] / 16), int(rect[2] / 16), int(rect[3] / 16)
         else:
-            print("\033[31m" + f"il y a {len(rect)} élements fournis dans {rect}, cette longueur devrait etre de 2 ou 4" + "\033[0m")
+            print("\033[31m" + f"screen.convert_rect_to_case(): il y a {len(rect)} élements fournis dans {rect}, cette longueur devrait etre de 2 ou 4" + "\033[0m")
 
         return result
 

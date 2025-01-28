@@ -2,10 +2,10 @@
 
 """
 TODO:
-    - le bug des fps dans le mode solo vient en partie du refresh screen
+    - le centrage de la cam ne fonctionne plus ?????????????
 
 TODO:
-    - faire le placement des buildings quand click gauche est appuyer
+    - faire enfin de delta time
 """
 
 import pygame
@@ -53,7 +53,7 @@ class Game:
     def run(self):
         """La bouche de jeu"""
         self.internet_manager.start(self)
-        self.drill = _build.Drill((16, 16))
+        self.drill = self.building.drill(self, (16, 16))
 
         while self.is_running:
             self.update_game()
@@ -66,12 +66,22 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.is_running = False
 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # Si un building est actuellement en train detre placer, le placer 
+                    if self.place_building:
+                        pos = self.building.get_place_pos(self.place_building.data.img)
+                        print(pos)
+                        self.place_building.init(pos_rect=pos)
+                        self.building.add_building(building=self.place_building)
+                        self.place_building = None
+
                 if event.type == pygame.KEYDOWN:
                     self.key_pressed.append(event.key)
 
                     if event.key == pygame.K_1:
-                        if self.place_building: self.place_building = None
-                        else: self.place_building = _build.Drill(is_init=False)
+                        if self.place_building: self.building.reset_place()
+                        else: 
+                            self.place_building = self.building.drill(game=self, is_init=False)
 
                     if event.key == pygame.K_F6:
                         self.game_physic.debug_mode = not self.game_physic.debug_mode
@@ -79,6 +89,7 @@ class Game:
                         else: print("Debug Mode désactiver !")
 
                     # if event.key == pygame.K_F7:
+                    """permet de passer au mode solo (fonctionne mais beug enormement)"""
                     #     self.internet_manager.switch_online_mode()
 
                 if event.type == pygame.KEYUP:
