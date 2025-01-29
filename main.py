@@ -14,7 +14,6 @@ from src.screen import Screen
 from src.entity import Entity
 from src.internetManager import InternetManager
 from src.gamePhysics import GamePhysic
-import cProfile
 
 pygame.init()
 
@@ -34,13 +33,13 @@ class Game:
         self.place_building = False
         self.clock = pygame.time.Clock()
 
-    def refresh_screen(self, is_online):
+    def refresh_screen(self):
         """redessine tout l'écran avec la caméra"""
-        if is_online:
+        if self.internet_manager.get_online_mode():
             player_pos, all_players_pos = self.internet_manager.get_players_position()
-            self.screen.refresh_screen(player_pos, all_players_pos, is_online=is_online)
+            self.screen.refresh_screen(player_pos, all_players_pos, is_online=True)
         else:
-            self.screen.refresh_screen(self.player.position, is_online=is_online)
+            self.screen.refresh_screen(self.player.position, is_online=False)
 
         self.player.move()
 
@@ -57,8 +56,10 @@ class Game:
 
         while self.is_running:
             self.update_game()
-            self.refresh_screen(is_online=self.internet_manager.get_online_mode())
+            self.refresh_screen()
             pygame.display.flip()
+
+            # print(self.screen.camera.camera.topleft)
 
             self.building.update_all_building()
 
@@ -70,7 +71,6 @@ class Game:
                     # Si un building est actuellement en train detre placer, le placer 
                     if self.place_building:
                         pos = self.building.get_place_pos(self.place_building.data.img)
-                        print(pos)
                         self.place_building.init(pos_rect=pos)
                         self.building.add_building(building=self.place_building)
                         self.place_building = None

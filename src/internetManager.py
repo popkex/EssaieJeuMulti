@@ -30,7 +30,7 @@ class InternetManager:
         for data in self.client_thread.get_players_position():
             ip, coords = data
 
-            if ip == self.my_ip:
+            if ip[0] == self.my_ip[0]:
                 local_player_pos = coords
 
             all_players_pos.append((ip, coords))
