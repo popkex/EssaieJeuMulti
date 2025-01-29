@@ -9,6 +9,7 @@ TODO:
 """
 
 import pygame
+import time
 from systems import building as _build
 from src.screen import Screen
 from src.entity import Entity
@@ -17,12 +18,34 @@ from src.gamePhysics import GamePhysic
 
 pygame.init()
 
+class DeltaTime:
+    def __init__(self):
+        self.set_delta_time()
+
+    def set_delta_time(self):
+        self.previous_time = None
+        self.current_time = None
+        self.delta_time = None
+
+        self.current_time = time.time()
+
+    def update_delta_time(self):
+        self.previous_time = self.current_time
+        self.current_time = time.time()
+
+        self.delta_time = (self.current_time - self.previous_time) * 1000
+
+    def get_delta_time(self):
+        return self.delta_time
+
 class Game:
     def __init__(self):
         self.screen = Screen(self)
         self.player = Entity(self, position=(100, 0), scale=50)
         self.internet_manager = InternetManager()
         self.game_physic = GamePhysic(self.screen, self)
+
+        self.delta_time = DeltaTime()
 
         self.building = _build
         self.building.buildings = _build.Building(self)
@@ -55,6 +78,7 @@ class Game:
         self.drill = self.building.drill(self, (16, 16))
 
         while self.is_running:
+            self.delta_time.update_delta_time()
             self.update_game()
             self.refresh_screen()
             pygame.display.flip()
@@ -95,7 +119,7 @@ class Game:
                 if event.type == pygame.KEYUP:
                     self.key_pressed.remove(event.key)
 
-            self.clock.tick(60)
+            self.clock.tick(30)
 
         self.internet_manager.stop()
         pygame.quit()

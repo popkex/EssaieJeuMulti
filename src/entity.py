@@ -7,7 +7,7 @@ class Entity:
         self.position = position
         self.scale = scale
 
-        self.velocity = 1
+        self.velocity = 1/10
 
 
     def draw(self, position):
@@ -57,13 +57,13 @@ class Entity:
             x, y = self.position
 
         if keys[pygame.K_UP]:
-            y -= self.velocity
+            y -= self.velocity * self.game.delta_time.get_delta_time()
         if keys[pygame.K_DOWN]:
-            y += self.velocity
+            y += self.velocity * self.game.delta_time.get_delta_time()
         if keys[pygame.K_LEFT]:
-            x -= self.velocity
+            x -= self.velocity * self.game.delta_time.get_delta_time()
         if keys[pygame.K_RIGHT]:
-            x += self.velocity
+            x += self.velocity * self.game.delta_time.get_delta_time()
 
         # Détection des collisions avec les murs (sans décalage caméra)
         zone_collide = self.game.game_physic.collide(self.position, (self.scale, self.scale))  # calculer la collisions avec les murs
